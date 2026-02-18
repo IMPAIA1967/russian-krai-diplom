@@ -1,36 +1,208 @@
-    <div class="menu-grid">
+{% extends 'restaurant/base.html' %}
+
+{% block title %}Меню - Ресторан "Русский Край"{% endblock %}
+
+{% block content %}
+<!-- Герой секция -->
+<section class="hero" style="height: 50vh;">
+    <h1 class="hero-logo" style="font-size: 120px; letter-spacing: 15px;">МЕНЮ</h1>
+    <p class="hero-subtitle">НАШИ БЛЮДА</p>
+</section>
+
+<!-- Меню ресторана -->
+<div class="container">
+    <!-- Категории -->
+    {% if categories %}
+    <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 60px; flex-wrap: wrap;">
+        {% for category in categories %}
+        <button onclick="filterCategory({{ category.id }})"
+                style="
+                    background: transparent;
+                    border: 1px solid #c9a962;
+                    color: #c9a962;
+                    padding: 15px 40px;
+                    font-family: 'Montserrat', sans-serif;
+                    font-size: 14px;
+                    letter-spacing: 2px;
+                    text-transform: uppercase;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    border-radius: 0;
+                "
+                onmouseover="this.style.background='#c9a962'; this.style.color='#000'"
+                onmouseout="this.style.background='transparent'; this.style.color='#c9a962'">
+            {{ category.name }}
+        </button>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Сетка блюд -->
+    <div class="menu-grid" id="menuGrid" style="
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 40px;
+        margin-bottom: 80px;
+    ">
         {% if menu_items %}
             {% for item in menu_items %}
-            <div class="menu-item">
+            <div class="menu-item" data-category="{{ item.category.id }}" style="
+                background: #111;
+                border: 1px solid #1a1a1a;
+                overflow: hidden;
+                transition: all 0.4s;
+                position: relative;
+            "
+            onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='#c9a962'"
+            onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='#1a1a1a'">
+
+                <!-- Изображение -->
                 {% if item.image %}
-                <img src="{{ item.image }}" alt="{{ item.name }}">
+                <div style="
+                    width: 100%;
+                    height: 280px;
+                    overflow: hidden;
+                    position: relative;
+                ">
+                    <img src="{{ item.image }}" alt="{{ item.name }}" style="
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        transition: transform 0.4s;
+                    "
+                    onmouseover="this.style.transform='scale(1.1)'"
+                    onmouseout="this.style.transform='scale(1)'">
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);
+                    "></div>
+                </div>
                 {% else %}
-                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400" alt="{{ item.name }}">
+                <div style="
+                    width: 100%;
+                    height: 280px;
+                    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 72px;
+                ">🍽️</div>
                 {% endif %}
-                <div class="menu-item-content">
-                    <h3>{{ item.name }}</h3>
-                    <p>{{ item.description }}</p>
-                    <p class="price">{{ item.price }} ₽</p>
+
+                <!-- Информация о блюде -->
+                <div style="padding: 35px;">
+                    <h3 style="
+                        font-family: 'Cormorant Garamond', serif;
+                        font-size: 32px;
+                        margin-bottom: 15px;
+                        color: #fff;
+                        font-weight: 600;
+                    ">{{ item.name }}</h3>
+
+                    <p style="
+                        color: #888;
+                        line-height: 1.8;
+                        margin-bottom: 25px;
+                        font-size: 15px;
+                        min-height: 60px;
+                    ">{{ item.description }}</p>
+
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        border-top: 1px solid #222;
+                        padding-top: 20px;
+                    ">
+                        <span style="
+                            color: #c9a962;
+                            font-size: 32px;
+                            font-weight: 700;
+                            letter-spacing: 2px;
+                        ">{{ item.price }} ₽</span>
+
+                        {% if item.is_available %}
+                        <span style="
+                            background: #49cc90;
+                            color: #fff;
+                            padding: 8px 20px;
+                            font-size: 12px;
+                            letter-spacing: 1px;
+                            text-transform: uppercase;
+                            border-radius: 3px;
+                        ">Доступно</span>
+                        {% else %}
+                        <span style="
+                            background: #666;
+                            color: #fff;
+                            padding: 8px 20px;
+                            font-size: 12px;
+                            letter-spacing: 1px;
+                            text-transform: uppercase;
+                            border-radius: 3px;
+                        ">Недоступно</span>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             {% endfor %}
         {% else %}
-            <!-- Заглушка, если меню пустое -->
-            <div class="menu-item">
-                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400" alt="Борщ">
-                <div class="menu-item-content">
-                    <h3>Борщ Московский</h3>
-                    <p>Традиционный русский борщ со сметаной и зеленью</p>
-                    <p class="price">450 ₽</p>
+            <!-- Заглушка с примерами блюд -->
+            <div class="menu-item" style="background: #111; border: 1px solid #1a1a1a;">
+                <div style="width: 100%; height: 280px; background: linear-gradient(135deg, #8B0000, #DC143C); display: flex; align-items: center; justify-content: center; font-size: 72px;">🥘</div>
+                <div style="padding: 35px;">
+                    <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 32px; margin-bottom: 15px; color: #fff;">Борщ Московский</h3>
+                    <p style="color: #888; line-height: 1.8; margin-bottom: 25px;">Традиционный русский борщ со сметаной и зеленью</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #222; padding-top: 20px;">
+                        <span style="color: #c9a962; font-size: 32px; font-weight: 700;">450 ₽</span>
+                        <span style="background: #49cc90; color: #fff; padding: 8px 20px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase;">Доступно</span>
+                    </div>
                 </div>
             </div>
-            <div class="menu-item">
-                <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400" alt="Пельмени">
-                <div class="menu-item-content">
-                    <h3>Пельмени Сибирские</h3>
-                    <p>Домашние пельмени с мясом трех видов</p>
-                    <p class="price">520 ₽</p>
+
+            <div class="menu-item" style="background: #111; border: 1px solid #1a1a1a;">
+                <div style="width: 100%; height: 280px; background: linear-gradient(135deg, #DAA520, #FFD700); display: flex; align-items: center; justify-content: center; font-size: 72px;">🥟</div>
+                <div style="padding: 35px;">
+                    <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 32px; margin-bottom: 15px; color: #fff;">Пельмени Сибирские</h3>
+                    <p style="color: #888; line-height: 1.8; margin-bottom: 25px;">Домашние пельмени с мясом трех видов</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #222; padding-top: 20px;">
+                        <span style="color: #c9a962; font-size: 32px; font-weight: 700;">520 ₽</span>
+                        <span style="background: #49cc90; color: #fff; padding: 8px 20px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase;">Доступно</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-item" style="background: #111; border: 1px solid #1a1a1a;">
+                <div style="width: 100%; height: 280px; background: linear-gradient(135deg, #228B22, #32CD32); display: flex; align-items: center; justify-content: center; font-size: 72px;">🥗</div>
+                <div style="padding: 35px;">
+                    <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 32px; margin-bottom: 15px; color: #fff;">Оливье Классический</h3>
+                    <p style="color: #888; line-height: 1.8; margin-bottom: 25px;">Новогодний салат с колбасой и огурцами</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #222; padding-top: 20px;">
+                        <span style="color: #c9a962; font-size: 32px; font-weight: 700;">380 ₽</span>
+                        <span style="background: #49cc90; color: #fff; padding: 8px 20px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase;">Доступно</span>
+                    </div>
                 </div>
             </div>
         {% endif %}
     </div>
+</div>
+
+<!-- Скрипт фильтрации -->
+<script>
+function filterCategory(categoryId) {
+    const items = document.querySelectorAll('.menu-item');
+    items.forEach(item => {
+        const itemCategory = item.getAttribute('data-category');
+        if (itemCategory == categoryId) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+</script>
+{% endblock %}

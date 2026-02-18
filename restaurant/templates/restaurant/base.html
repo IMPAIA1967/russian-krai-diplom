@@ -1,39 +1,251 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Ресторан "Русский Край"{% endblock %}</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>{% block title %}Русский Край{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Навигация */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 30px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+        }
+
+        .logo {
+            font-family: 'Pinyon Script', cursive;
+            font-size: 42px;
+            font-weight: 400;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: 2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #c9a962;
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        .nav-menu a:hover {
+            color: #c9a962;
+        }
+
+
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)),
+                        url('https://png.pngtree.com/background/20230522/original/pngtree-dark-kitchen-in-a-black-room-picture-image_2688478.jpg') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 180px;
+            font-weight: 700;
+            letter-spacing: 20px;
+            margin-bottom: 20px;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .hero-subtitle {
+            font-size: 28px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            margin-bottom: 40px;
+            color: #c9a962;
+        }
+
+        .hero-description {
+            font-size: 18px;
+            max-width: 600px;
+            line-height: 1.8;
+            margin-bottom: 50px;
+            font-weight: 300;
+        }
+
+        .hero-phone {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+        }
+
+        .hero-hours {
+            font-size: 16px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            line-height: 2;
+        }
+
+        .hero-hours div {
+            margin: 5px 0;
+        }
+
+        /* Основной контент */
+        .main-content {
+            background: #0a0a0a;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 50px;
+        }
+
+        /* Секция "О нас" */
+        .about {
+            text-align: center;
+            padding: 100px 0;
+        }
+
+        .about h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 48px;
+            margin-bottom: 30px;
+            color: #c9a962;
+        }
+
+        .about p {
+            font-size: 18px;
+            line-height: 2;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #b0b0b0;
+        }
+
+        /* Подвал */
+        .footer {
+            background: #050505;
+            padding: 50px;
+            text-align: center;
+            border-top: 1px solid #1a1a1a;
+        }
+
+        .footer p {
+            color: #666;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 20px 30px;
+            }
+
+            .logo {
+                font-size: 32px;
+                letter-spacing: 4px;
+            }
+
+            .nav-menu {
+                gap: 20px;
+            }
+
+            .nav-menu a {
+                font-size: 12px;
+            }
+
+            .hero-logo {
+                font-size: 100px;
+                letter-spacing: 10px;
+            }
+
+            .hero-subtitle {
+                font-size: 20px;
+                letter-spacing: 4px;
+            }
+
+            .hero-phone {
+                font-size: 24px;
+            }
+
+            .container {
+                padding: 50px 30px;
+            }
+        }
+
+        /* Декоративные элементы - русские узоры */
+        .ornament {
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #c9a962, transparent);
+            margin: 30px auto;
+        }
+    </style>
 </head>
 <body>
-    <!-- Шапка сайта -->
-    <header class="header">
-        <div class="container">
-            <nav class="navbar">
-                <a href="{% url 'index' %}" class="logo">🍽️ Русский Край</a>
-                <ul class="nav-menu">
-                    <li><a href="{% url 'index' %}">Главная</a></li>
-                    <li><a href="{% url 'menu' %}">Меню</a></li>
-                    <li><a href="{% url 'reservation' %}">Бронирование</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <a href="{% url 'index' %}" class="logo">Русский Край</a>
+        <ul class="nav-menu">
+            <li><a href="{% url 'index' %}">Главная</a></li>
+            <li><a href="{% url 'menu' %}">Меню</a></li>
+            <li><a href="{% url 'reservation' %}">Бронирование</a></li>
+        </ul>
+    </nav>
 
     <!-- Основной контент -->
     <main class="main-content">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Подвал сайта -->
+    <!-- Подвал -->
     <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 Ресторан "Русский Край". Все права защищены.</p>
-            <p>📞 +7 (999) 000-00-00 | 📍 ул. Примерная, д. 1</p>
-        </div>
+        <p>&copy; 2026 Ресторан "Русский Край". Все права защищены.</p>
     </footer>
 </body>
 </html>

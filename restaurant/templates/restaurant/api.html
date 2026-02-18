@@ -1,0 +1,345 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API - Ресторан "Русский Край"</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 30px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+        }
+
+        .logo {
+            font-family: 'Pinyon Script', cursive;
+            font-size: 42px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+
+        .nav-menu a:hover {
+            color: #c9a962;
+        }
+
+        .hero {
+            padding: 150px 50px 80px;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8));
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #c9a962;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #888;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px;
+        }
+
+        .endpoints {
+            display: grid;
+            gap: 30px;
+        }
+
+        .endpoint-card {
+            background: #111;
+            border: 1px solid #1a1a1a;
+            border-radius: 10px;
+            padding: 40px;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .endpoint-card:hover {
+            transform: translateY(-5px);
+            border-color: #c9a962;
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .method {
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .method-get {
+            background: #61affe;
+            color: #fff;
+        }
+
+        .method-post {
+            background: #49cc90;
+            color: #fff;
+        }
+
+        .url {
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            color: #c9a962;
+            flex: 1;
+        }
+
+        .description {
+            color: #888;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .example {
+            background: #0a0a0a;
+            padding: 20px;
+            border-radius: 5px;
+            border-left: 3px solid #c9a962;
+            margin-top: 20px;
+        }
+
+        .example-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .example-code {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #b0b0b0;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .ornament {
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #c9a962, transparent);
+            margin: 30px auto;
+        }
+
+        .footer {
+            background: #050505;
+            padding: 50px;
+            text-align: center;
+            border-top: 1px solid #1a1a1a;
+            margin-top: 50px;
+        }
+
+        .footer p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 42px;
+            }
+
+            .endpoint-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <a href="/" class="logo">Русский Край</a>
+        <ul class="nav-menu">
+            <li><a href="/">Главная</a></li>
+            <li><a href="/menu/">Меню</a></li>
+            <li><a href="/reservation/">Бронирование</a></li>
+            <li><a href="/api/" style="color: #c9a962;">API</a></li>
+        </ul>
+    </nav>
+
+    <!-- Герой секция -->
+    <section class="hero">
+        <h1>API Документация</h1>
+        <p>RESTful API для интеграции с системой ресторана "Русский Край"</p>
+        <div class="ornament"></div>
+    </section>
+
+    <!-- Endpoints -->
+    <div class="container">
+        <div class="endpoints">
+            <!-- Categories -->
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method method-get">GET</span>
+                    <span class="url">/api/categories/</span>
+                </div>
+                <p class="description">
+                    Получить список всех категорий меню. Возвращает категории с количеством блюд в каждой.
+                </p>
+                <div class="example">
+                    <div class="example-title">Пример ответа:</div>
+                    <div class="example-code">[
+  {
+    "id": 1,
+    "name": "Закуски",
+    "description": "Холодные и горячие закуски",
+    "order": 1,
+    "menu_items_count": 3
+  }
+]</div>
+                </div>
+            </div>
+
+            <!-- Menu Items -->
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method method-get">GET</span>
+                    <span class="url">/api/menu/</span>
+                </div>
+                <p class="description">
+                    Получить список всех блюд меню. Поддерживает фильтрацию, поиск и сортировку.
+                </p>
+                <div class="example">
+                    <div class="example-title">Параметры:</div>
+                    <div class="example-code">?category=1          - фильтр по категории
+?is_available=true   - только доступные блюда
+?search=борщ         - поиск по названию
+?ordering=price      - сортировка по цене</div>
+                </div>
+            </div>
+
+            <!-- Reservations GET -->
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method method-get">GET</span>
+                    <span class="url">/api/reservations/</span>
+                </div>
+                <p class="description">
+                    Получить список всех бронирований.
+                </p>
+            </div>
+
+            <!-- Reservations POST -->
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="url">/api/reservations/</span>
+                </div>
+                <p class="description">
+                    Создать новое бронирование столика.
+                </p>
+                <div class="example">
+                    <div class="example-title">Пример запроса:</div>
+                    <div class="example-code">{
+  "guest_name": "Иван Иванов",
+  "guest_phone": "+79991234567",
+  "guest_email": "ivan@example.com",
+  "reservation_date": "2026-03-01",
+  "reservation_time": "19:00:00",
+  "guests_count": 4,
+  "special_requests": "Столик у окна"
+}</div>
+                </div>
+            </div>
+
+            <!-- Auth Login -->
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="url">/api/auth/login/</span>
+                </div>
+                <p class="description">
+                    Аутентификация пользователя и получение JWT токенов.
+                </p>
+                <div class="example">
+                    <div class="example-title">Пример запроса:</div>
+                    <div class="example-code">{
+  "email": "admin@russian-krai.ru",
+  "password": "password123"
+}
+
+Ответ:
+{
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+  "user": {...}
+}</div>
+                </div>
+            </div>
+
+            <!-- Auth Register -->
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="url">/api/auth/register/</span>
+                </div>
+                <p class="description">
+                    Регистрация нового пользователя (администратора).
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 Ресторан "Русский Край". API v1.0</p>
+    </footer>
+</body>
+</html>

@@ -1,39 +1,33 @@
 {% extends 'restaurant/base.html' %}
 
-{% block title %}Главная - Ресторан "Русский Край"{% endblock %}
+{% block title %}Русский Край - Традиционная кухня{% endblock %}
 
 {% block content %}
-<div class="container">
-    <!-- Герой-секция -->
-    <section class="hero">
-        <h1>Добро пожаловать в "Русский Край"</h1>
-        <p>Традиционная русская кухня в современном исполнении</p>
-        <a href="{% url 'reservation' %}" class="btn">Забронировать столик</a>
-    </section>
+<!-- Герой секция -->
+<section class="hero">
+    <h1 class="hero-logo">РК</h1>
+    <p class="hero-subtitle">ЕДА И ДЕСЕРТЫ</p>
+    <p class="hero-description">
+        Традиционная русская кухня в современном исполнении.<br>
+        Аутентичные рецепты и фермерские продукты
+    </p>
+    <p class="hero-phone">+7 (999) 000-00-00</p>
+    <div class="hero-hours">
+        <div>Ежедневно</div>
+        <div>пн-чт,вс с 8:00 до 23:00</div>
+        <div>пт,сб с 8:00 до 00:00</div>
+    </div>
+</section>
 
-    <!-- О ресторане -->
-    <section class="about">
-        <h2 style="font-family: 'Playfair Display', serif; font-size: 36px; text-align: center; margin-bottom: 30px;">О нашем ресторане</h2>
-        <div style="background: #fff; padding: 40px; border-radius: 10px; box-shadow: 0 3px 15px rgba(0,0,0,0.1);">
-            <p style="font-size: 18px; line-height: 1.8; text-align: center;">
-                Ресторан "Русский Край" — это место, где традиционная русская кухня встречается с современным сервисом. 
-                Мы используем только свежие фермерские продукты и готовим каждое блюдо с любовью и вниманием к деталям.
-            </p>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-top: 40px; text-align: center;">
-                <div>
-                    <h3 style="color: #f39c12; font-size: 36px;">15+</h3>
-                    <p>Лет опыта</p>
-                </div>
-                <div>
-                    <h3 style="color: #f39c12; font-size: 36px;">50+</h3>
-                    <p>Блюд в меню</p>
-                </div>
-                <div>
-                    <h3 style="color: #f39c12; font-size: 36px;">1000+</h3>
-                    <p>Довольных гостей</p>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
+<!-- Секция "О нас" -->
+<section class="about">
+    <h2>Русский Край</h2>
+    <div class="ornament"></div>
+    <p>
+        Ресторан, где традиции встречаются с современностью.
+        Мы сохраняем аутентичность русской кухни, используя лучшие продукты
+        от локальных фермеров и проверенных поставщиков.
+    </p>
+    <div class="ornament"></div>
+</section>
 {% endblock %}

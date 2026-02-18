@@ -150,3 +150,7 @@ class ReservationView(CreateView):
     def form_invalid(self, form):
         messages.error(self.request, 'Пожалуйста, исправьте ошибки в форме.')
         return super().form_invalid(form)
+
+class ApiDocsView(TemplateView):
+    """Красивая страница документации API"""
+    template_name = 'restaurant/api.html'

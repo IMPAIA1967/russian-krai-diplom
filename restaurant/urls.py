@@ -14,31 +14,34 @@ from .views import (
     IndexView,
     MenuView,
     ReservationView,
+    ApiDocsView,
 )
 
-# Создаём API роутер
+
 router = DefaultRouter()
 router.register(r'categories', CategoryViewSet, basename='category')
-router.register(r'menu', MenuItemViewSet, basename='menu-item')
+router.register(r'menu-items', MenuItemViewSet, basename='menu-item')
 router.register(r'reservations', ReservationViewSet, basename='reservation')
 router.register(r'users', UserViewSet, basename='user')
 
-# Веб-страницы (Templates)
+
 web_urlpatterns = [
     path('', IndexView.as_view(), name='index'),
     path('menu/', MenuView.as_view(), name='menu'),
     path('reservation/', ReservationView.as_view(), name='reservation'),
+    path('api-docs/', ApiDocsView.as_view(), name='api-docs'),
 ]
 
-# API endpoints
+
 api_urlpatterns = [
     path('', api_root, name='api-root'),
     path('auth/register/', RegisterView.as_view(), name='register'),
     path('auth/login/', LoginView.as_view(), name='login'),
 ]
 
-# Объединяем всё
+
 urlpatterns = web_urlpatterns + [
-    path('api/', include((router.urls, 'api'), namespace='api')),
-    path('api/auth/', include((api_urlpatterns[1:], 'auth'), namespace='auth')),
+    path('api/', include(router.urls)),
+    path('api/auth/register/', RegisterView.as_view(), name='api-register'),
+    path('api/auth/login/', LoginView.as_view(), name='api-login'),
 ]

@@ -1,42 +1,60 @@
 {% extends 'restaurant/base.html' %}
 
-{% block title %}Бронирование - Ресторан "Русский Край"{% endblock %}
+{% block title %}Бронирование - Русский Край{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2 style="font-family: 'Playfair Display', serif; font-size: 36px; text-align: center; margin-bottom: 40px;">Забронировать столик</h2>
-    
-    <form class="reservation-form" method="POST">
+<section class="hero" style="height: 50vh; background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1514362545857-3bc16c6c7d1e?w=1920');">
+    <h1 class="hero-logo" style="font-size: 100px;">БРОНЬ</h1>
+    <p class="hero-subtitle">ЗАБРОНИРОВАТЬ СТОЛИК</p>
+</section>
+
+<div class="container" style="max-width: 700px; padding: 80px 50px;">
+    <form method="POST" style="
+        background: #111;
+        padding: 60px;
+        border: 1px solid #1a1a1a;
+    ">
         {% csrf_token %}
-        
-        <div class="form-group">
-            <label for="guest_name">Ваше имя *</label>
-            <input type="text" id="guest_name" name="guest_name" required placeholder="Иван Иванов">
+
+        <div style="margin-bottom: 30px;">
+            <label style="display: block; margin-bottom: 10px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #c9a962;">Ваше имя *</label>
+            <input type="text" name="guest_name" required
+                   style="width: 100%; padding: 15px; background: #0a0a0a; border: 1px solid #2a2a2a; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 16px;"
+                   placeholder="Иван Иванов">
         </div>
-        
-        <div class="form-group">
-            <label for="guest_phone">Телефон *</label>
-            <input type="tel" id="guest_phone" name="guest_phone" required placeholder="+7 (999) 000-00-00">
+
+        <div style="margin-bottom: 30px;">
+            <label style="display: block; margin-bottom: 10px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #c9a962;">Телефон *</label>
+            <input type="tel" name="guest_phone" required
+                   style="width: 100%; padding: 15px; background: #0a0a0a; border: 1px solid #2a2a2a; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 16px;"
+                   placeholder="+7 (999) 000-00-00">
         </div>
-        
-        <div class="form-group">
-            <label for="guest_email">Email *</label>
-            <input type="email" id="guest_email" name="guest_email" required placeholder="email@example.com">
+
+        <div style="margin-bottom: 30px;">
+            <label style="display: block; margin-bottom: 10px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #c9a962;">Email *</label>
+            <input type="email" name="guest_email" required
+                   style="width: 100%; padding: 15px; background: #0a0a0a; border: 1px solid #2a2a2a; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 16px;"
+                   placeholder="email@example.com">
         </div>
-        
-        <div class="form-group">
-            <label for="reservation_date">Дата *</label>
-            <input type="date" id="reservation_date" name="reservation_date" required>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+            <div>
+                <label style="display: block; margin-bottom: 10px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #c9a962;">Дата *</label>
+                <input type="date" name="reservation_date" required
+                       style="width: 100%; padding: 15px; background: #0a0a0a; border: 1px solid #2a2a2a; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 16px;">
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 10px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #c9a962;">Время *</label>
+                <input type="time" name="reservation_time" required
+                       style="width: 100%; padding: 15px; background: #0a0a0a; border: 1px solid #2a2a2a; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 16px;">
+            </div>
         </div>
-        
-        <div class="form-group">
-            <label for="reservation_time">Время *</label>
-            <input type="time" id="reservation_time" name="reservation_time" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="guests_count">Количество гостей *</label>
-            <select id="guests_count" name="guests_count" required>
+
+        <div style="margin-bottom: 30px;">
+            <label style="display: block; margin-bottom: 10px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #c9a962;">Количество гостей *</label>
+            <select name="guests_count" required
+                    style="width: 100%; padding: 15px; background: #0a0a0a; border: 1px solid #2a2a2a; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 16px;">
                 <option value="1">1 гость</option>
                 <option value="2" selected>2 гостя</option>
                 <option value="3">3 гостя</option>
@@ -47,13 +65,30 @@
                 <option value="10">9-10 гостей</option>
             </select>
         </div>
-        
-        <div class="form-group">
-            <label for="special_requests">Особые пожелания</label>
-            <textarea id="special_requests" name="special_requests" placeholder="Например: день рождения, аллергия на орехи..."></textarea>
+
+        <div style="margin-bottom: 40px;">
+            <label style="display: block; margin-bottom: 10px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #c9a962;">Особые пожелания</label>
+            <textarea name="special_requests" rows="4"
+                      style="width: 100%; padding: 15px; background: #0a0a0a; border: 1px solid #2a2a2a; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 16px; resize: vertical;"
+                      placeholder="Например: день рождения, аллергия на орехи..."></textarea>
         </div>
-        
-        <button type="submit" class="btn" style="width: 100%; border: none; cursor: pointer;">Забронировать</button>
+
+        <button type="submit" style="
+            width: 100%;
+            padding: 20px;
+            background: #c9a962;
+            color: #000;
+            border: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.3s;
+        " onmouseover="this.style.background='#d4b978'" onmouseout="this.style.background='#c9a962'">
+            Забронировать
+        </button>
     </form>
 </div>
 {% endblock %}
