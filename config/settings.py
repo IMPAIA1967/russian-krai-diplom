@@ -102,3 +102,20 @@ STATIC_URL = "static/"
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+TORTOISE_ORM = {
+    "connections": {
+        "default": {
+            "engine": "tortoise.backends.sqlite",
+            "credentials": {
+                "file_path": "db.sqlite3"
+            }
+        }
+    },
+    "apps": {
+        "models": {
+            "models": ["restaurant.models", "aerich.models"],
+            "default_connection": "default",
+        },
+    },
+}
