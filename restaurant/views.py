@@ -17,7 +17,8 @@ from .serializers import (
     UserSerializer,
     LoginSerializer
 )
-
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -97,7 +98,19 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
-
+@api_view(['GET'])
+def api_root(request):
+    """
+    Корневой endpoint API.
+    Показывает доступные endpoints
+    """
+    return Response({
+        'categories': '/api/categories/',
+        'menu': '/api/menu/',
+        'reservations': '/api/reservations/',
+        'auth/register': '/api/auth/register/',
+        'auth/login': '/api/auth/login/',
+    }, headers={'Allow': 'GET, HEAD, OPTIONS'})
 
 class IndexView(TemplateView):
     """Контроллер для главной страницы."""
