@@ -96,8 +96,12 @@ USE_I18N = True
 USE_TZ = True
 
 
-
+# Настройка статических файлов
 STATIC_URL = "static/"
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
 
@@ -146,3 +150,7 @@ SIMPLE_JWT = {
     'SIGNING_KEY': 'your-secret-key-change-in-production',
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+# Настройка медиа файлов (для изображений)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

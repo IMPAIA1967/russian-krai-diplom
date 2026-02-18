@@ -1,0 +1,39 @@
+{% extends 'restaurant/base.html' %}
+
+{% block title %}Главная - Ресторан "Русский Край"{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Герой-секция -->
+    <section class="hero">
+        <h1>Добро пожаловать в "Русский Край"</h1>
+        <p>Традиционная русская кухня в современном исполнении</p>
+        <a href="{% url 'reservation' %}" class="btn">Забронировать столик</a>
+    </section>
+
+    <!-- О ресторане -->
+    <section class="about">
+        <h2 style="font-family: 'Playfair Display', serif; font-size: 36px; text-align: center; margin-bottom: 30px;">О нашем ресторане</h2>
+        <div style="background: #fff; padding: 40px; border-radius: 10px; box-shadow: 0 3px 15px rgba(0,0,0,0.1);">
+            <p style="font-size: 18px; line-height: 1.8; text-align: center;">
+                Ресторан "Русский Край" — это место, где традиционная русская кухня встречается с современным сервисом. 
+                Мы используем только свежие фермерские продукты и готовим каждое блюдо с любовью и вниманием к деталям.
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-top: 40px; text-align: center;">
+                <div>
+                    <h3 style="color: #f39c12; font-size: 36px;">15+</h3>
+                    <p>Лет опыта</p>
+                </div>
+                <div>
+                    <h3 style="color: #f39c12; font-size: 36px;">50+</h3>
+                    <p>Блюд в меню</p>
+                </div>
+                <div>
+                    <h3 style="color: #f39c12; font-size: 36px;">1000+</h3>
+                    <p>Довольных гостей</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
