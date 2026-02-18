@@ -1,45 +1,36 @@
-{% extends 'restaurant/base.html' %}
-
-{% block title %}Меню - Ресторан "Русский Край"{% endblock %}
-
-{% block content %}
-<div class="container">
-    <h2 style="font-family: 'Playfair Display', serif; font-size: 36px; text-align: center; margin-bottom: 40px;">Наше Меню</h2>
-    
     <div class="menu-grid">
-        <!-- Пример блюда 1 -->
-        <div class="menu-item">
-            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400" alt="Борщ">
-            <div class="menu-item-content">
-                <h3>Борщ Московский</h3>
-                <p>Традиционный русский борщ со сметаной и зеленью</p>
-                <p class="price">450 ₽</p>
+        {% if menu_items %}
+            {% for item in menu_items %}
+            <div class="menu-item">
+                {% if item.image %}
+                <img src="{{ item.image }}" alt="{{ item.name }}">
+                {% else %}
+                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400" alt="{{ item.name }}">
+                {% endif %}
+                <div class="menu-item-content">
+                    <h3>{{ item.name }}</h3>
+                    <p>{{ item.description }}</p>
+                    <p class="price">{{ item.price }} ₽</p>
+                </div>
             </div>
-        </div>
-        
-        <!-- Пример блюда 2 -->
-        <div class="menu-item">
-            <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400" alt="Пельмени">
-            <div class="menu-item-content">
-                <h3>Пельмени Сибирские</h3>
-                <p>Домашние пельмени с мясом трех видов</p>
-                <p class="price">520 ₽</p>
+            {% endfor %}
+        {% else %}
+            <!-- Заглушка, если меню пустое -->
+            <div class="menu-item">
+                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400" alt="Борщ">
+                <div class="menu-item-content">
+                    <h3>Борщ Московский</h3>
+                    <p>Традиционный русский борщ со сметаной и зеленью</p>
+                    <p class="price">450 ₽</p>
+                </div>
             </div>
-        </div>
-        
-        <!-- Пример блюда 3 -->
-        <div class="menu-item">
-            <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400" alt="Десерт">
-            <div class="menu-item-content">
-                <h3>Медовик Классический</h3>
-                <p>Торт с медовыми коржами и сметанным кремом</p>
-                <p class="price">380 ₽</p>
+            <div class="menu-item">
+                <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400" alt="Пельмени">
+                <div class="menu-item-content">
+                    <h3>Пельмени Сибирские</h3>
+                    <p>Домашние пельмени с мясом трех видов</p>
+                    <p class="price">520 ₽</p>
+                </div>
             </div>
-        </div>
+        {% endif %}
     </div>
-    
-    <div style="text-align: center; margin-top: 40px;">
-        <a href="{% url 'reservation' %}" class="btn">Забронировать столик</a>
-    </div>
-</div>
-{% endblock %}

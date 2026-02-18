@@ -14,6 +14,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.hashers import check_password
 from .models import User
 from .serializers import UserSerializer, LoginSerializer
+from django.views.generic import TemplateView, CreateView
+from django.urls import reverse_lazy
+from django.contrib import messages
+from .models import Reservation
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -129,3 +133,61 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.request.user.is_admin:
             return User.objects.all()
         return User.objects.filter(id=self.request.user.id)
+
+
+class IndexView(TemplateView):
+    """
+    Контроллер для главной страницы.
+    Использует CBV (Class-Based View)
+    """
+    template_name = 'restaurant/index.html'
+
+    def get_context_data(self, **kwargs):
+        """Добавляем дополнительные данные в шаблон"""
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Главная'
+        return context
+
+
+class MenuView(TemplateView):
+    """
+    Контроллер для страницы меню.
+    Получает данные из базы данных и передаёт в шаблон
+    """
+    template_name = 'restaurant/menu.html'
+
+    def get_context_data(self, **kwargs):
+        """Добавляем блюда из базы данных"""
+        context = super().get_context_data(**kwargs)
+        # Получаем все доступные блюда из базы
+        context['menu_items'] = MenuItem.objects.filter(is_available=True)
+        context['categories'] = Category.objects.all().order_by('order')
+        context['page_title'] = 'Меню'
+        return context
+
+
+class ReservationView(CreateView):
+    """
+    Контроллер для страницы бронирования.
+    Обрабатывает форму и сохраняет данные в базу
+    """
+    template_name = 'restaurant/reservation.html'
+    model = Reservation
+    fields = ['guest_name', 'guest_phone', 'guest_email',
+              'reservation_date', 'reservation_time',
+              'guests_count', 'special_requests']
+    success_url = reverse_lazy('reservation')
+
+    def form_valid(self, form):
+        """Вызывается при успешной валидации формы"""
+        messages.success(self.request, 'Ваша заявка успешно отправлена!')
+
+        # Здесь будет отправка email и Telegram уведомления
+
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        """Вызывается при ошибке валидации"""
+        messages.error(self.request, 'Пожалуйста, исправьте ошибки в форме.')
+        return super().form_invalid(form)
