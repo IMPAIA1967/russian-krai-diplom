@@ -1,10 +1,10 @@
 from pathlib import Path
 from datetime import timedelta
 
+from rest_framework import settings
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-
 
 SECRET_KEY = "django-insecure-$9r%+4x+cjj$8&h5f59vkyksgq-l3z4%6zdqws@m0^m*ux^sub"
 
@@ -154,3 +154,21 @@ SIMPLE_JWT = {
 # Настройка медиа файлов (для изображений)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+TORTOISE_ORM = {
+    "connections": {
+        "default": {
+            "engine": "tortoise.backends.sqlite",
+            "credentials": {
+                "file_path": "db.sqlite3"
+            }
+        }
+    },
+    "apps": {
+        "models": {
+            "models": ["restaurant.models"],
+            "default_connection": "default",
+        },
+    },
+}
+

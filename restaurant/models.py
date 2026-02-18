@@ -1,17 +1,17 @@
-from tortoise import fields, models
+from django.db import models
 
 
 class Category(models.Model):
-    """Категории меню (например: Закуски, Основные блюда, Напитки)"""
-    name = fields.CharField(max_length=100, verbose_name="Название категории")
-    description = fields.TextField(null=True, verbose_name="Описание")
-    order = fields.IntField(default=0, verbose_name="Порядок отображения")
-    created_at = fields.DatetimeField(auto_now_add=True, verbose_name="Дата создания")
+    """Категории меню"""
+    name = models.CharField(max_length=100, verbose_name="Название категории")
+    description = models.TextField(null=True, blank=True, verbose_name="Описание")
+    order = models.IntegerField(default=0, verbose_name="Порядок отображения")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
     class Meta:
-        table = "categories"
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
+        db_table = "categories"
 
     def __str__(self):
         return self.name
@@ -19,24 +19,24 @@ class Category(models.Model):
 
 class MenuItem(models.Model):
     """Позиции меню ресторана"""
-    name = fields.CharField(max_length=200, verbose_name="Название блюда")
-    description = fields.TextField(verbose_name="Описание блюда")
-    price = fields.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
-    image = fields.CharField(max_length=500, null=True, verbose_name="Изображение")
-    category = fields.ForeignKeyField(
-        "models.Category",
+    name = models.CharField(max_length=200, verbose_name="Название блюда")
+    description = models.TextField(verbose_name="Описание блюда")
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
+    image = models.CharField(max_length=500, null=True, blank=True, verbose_name="Изображение")
+    category = models.ForeignKey(
+        Category,
         related_name="menu_items",
-        on_delete=fields.CASCADE,
+        on_delete=models.CASCADE,
         verbose_name="Категория"
     )
-    is_available = fields.BooleanField(default=True, verbose_name="Доступно")
-    created_at = fields.DatetimeField(auto_now_add=True, verbose_name="Дата создания")
-    updated_at = fields.DatetimeField(auto_now=True, verbose_name="Дата обновления")
+    is_available = models.BooleanField(default=True, verbose_name="Доступно")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
     class Meta:
-        table = "menu_items"
         verbose_name = "Позиция меню"
         verbose_name_plural = "Позиции меню"
+        db_table = "menu_items"
 
     def __str__(self):
         return self.name
@@ -51,40 +51,41 @@ class Reservation(models.Model):
         ('completed', 'Завершено'),
     ]
 
-    guest_name = fields.CharField(max_length=100, verbose_name="Имя гостя")
-    guest_phone = fields.CharField(max_length=20, verbose_name="Телефон")
-    guest_email = fields.CharField(max_length=200, verbose_name="Email")
-    reservation_date = fields.DateField(verbose_name="Дата бронирования")
-    reservation_time = fields.TimeField(verbose_name="Время бронирования")
-    guests_count = fields.IntField(default=2, verbose_name="Количество гостей")
-    status = fields.CharField(max_length=20, default='pending', choices=STATUS_CHOICES, verbose_name="Статус")
-    special_requests = fields.TextField(null=True, verbose_name="Особые пожелания")
-    created_at = fields.DatetimeField(auto_now_add=True, verbose_name="Дата создания")
-    updated_at = fields.DatetimeField(auto_now=True, verbose_name="Дата обновления")
+    guest_name = models.CharField(max_length=100, verbose_name="Имя гостя")
+    guest_phone = models.CharField(max_length=20, verbose_name="Телефон")
+    guest_email = models.CharField(max_length=200, verbose_name="Email")
+    reservation_date = models.DateField(verbose_name="Дата бронирования")
+    reservation_time = models.TimeField(verbose_name="Время бронирования")
+    guests_count = models.IntegerField(default=2, verbose_name="Количество гостей")
+    status = models.CharField(max_length=20, default='pending', choices=STATUS_CHOICES, verbose_name="Статус")
+    special_requests = models.TextField(null=True, blank=True, verbose_name="Особые пожелания")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
     class Meta:
-        table = "reservations"
         verbose_name = "Бронирование"
         verbose_name_plural = "Бронирования"
+        db_table = "reservations"
 
     def __str__(self):
         return f"{self.guest_name} - {self.reservation_date} {self.reservation_time}"
 
+
 class User(models.Model):
-    """Пользователь системы (администраторы ресторана)"""
-    email = fields.CharField(max_length=200, unique=True, verbose_name="Email")
-    password = fields.CharField(max_length=128, verbose_name="Пароль")
-    first_name = fields.CharField(max_length=100, null=True, verbose_name="Имя")
-    last_name = fields.CharField(max_length=100, null=True, verbose_name="Фамилия")
-    is_admin = fields.BooleanField(default=False, verbose_name="Администратор")
-    is_active = fields.BooleanField(default=True, verbose_name="Активен")
-    created_at = fields.DatetimeField(auto_now_add=True, verbose_name="Дата создания")
-    updated_at = fields.DatetimeField(auto_now=True, verbose_name="Дата обновления")
+    """Пользователь системы"""
+    email = models.CharField(max_length=200, unique=True, verbose_name="Email")
+    password = models.CharField(max_length=128, verbose_name="Пароль")
+    first_name = models.CharField(max_length=100, null=True, blank=True, verbose_name="Имя")
+    last_name = models.CharField(max_length=100, null=True, blank=True, verbose_name="Фамилия")
+    is_admin = models.BooleanField(default=False, verbose_name="Администратор")
+    is_active = models.BooleanField(default=True, verbose_name="Активен")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
     class Meta:
-        table = "users"
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
+        db_table = "users"
 
     def __str__(self):
         return self.email
