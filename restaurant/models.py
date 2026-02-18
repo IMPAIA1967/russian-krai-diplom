@@ -69,3 +69,22 @@ class Reservation(models.Model):
 
     def __str__(self):
         return f"{self.guest_name} - {self.reservation_date} {self.reservation_time}"
+
+class User(models.Model):
+    """Пользователь системы (администраторы ресторана)"""
+    email = fields.CharField(max_length=200, unique=True, verbose_name="Email")
+    password = fields.CharField(max_length=128, verbose_name="Пароль")
+    first_name = fields.CharField(max_length=100, null=True, verbose_name="Имя")
+    last_name = fields.CharField(max_length=100, null=True, verbose_name="Фамилия")
+    is_admin = fields.BooleanField(default=False, verbose_name="Администратор")
+    is_active = fields.BooleanField(default=True, verbose_name="Активен")
+    created_at = fields.DatetimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = fields.DatetimeField(auto_now=True, verbose_name="Дата обновления")
+
+    class Meta:
+        table = "users"
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+
+    def __str__(self):
+        return self.email

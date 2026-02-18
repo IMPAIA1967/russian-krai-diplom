@@ -1,5 +1,7 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Category, MenuItem, Reservation
+from django.contrib.auth.hashers import make_password, check_password
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -65,3 +67,23 @@ class ReservationCreateSerializer(serializers.ModelSerializer):
             'reservation_date', 'reservation_time', 'guests_count',
             'special_requests'
         ]
+
+class UserSerializer(serializers.ModelSerializer):
+    """Сериализатор для пользователей"""
+    password = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'password', 'first_name', 'last_name', 'is_admin', 'created_at']
+        read_only_fields = ['created_at']
+
+    def create(self, validated_data):
+        """Хешируем пароль перед сохранением"""
+        validated_data['password'] = make_password(validated_data['password'])
+        return super().create(validated_data)
+
+
+class LoginSerializer(serializers.Serializer):
+    """Сериализатор для входа пользователя"""
+    email = serializers.CharField(required=True)
+    password = serializers.CharField(required=True, write_only=True)
