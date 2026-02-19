@@ -1,0 +1,391 @@
+{% extends 'restaurant/base.html' %}
+
+{% block title %}Личный кабинет - Ресторан "Русский Край"{% endblock %}
+
+{% block content %}
+<style>
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<!-- Герой секция -->
+<section class="hero" style="height: 30vh;">
+    <h1 class="hero-logo" style="font-size: 80px; letter-spacing: 8px;">ПРОФИЛЬ</h1>
+    <p class="hero-subtitle">ЛИЧНЫЙ КАБИНЕТ</p>
+</section>
+
+<!-- Информация о пользователе -->
+<div class="container" style="max-width: 900px; margin: 50px auto; padding: 0 50px;">
+    <div style="
+        background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+        padding: 40px;
+        border: 1px solid #c9a962;
+        border-radius: 10px;
+        margin-bottom: 50px;
+        display: flex;
+        align-items: center;
+        gap: 30px;
+    ">
+        <div style="
+            width: 100px;
+            height: 100px;
+            background: #c9a962;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            flex-shrink: 0;
+        ">👤</div>
+
+        <div style="flex-grow: 1;">
+            <h2 style="
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 36px;
+                color: #c9a962;
+                margin: 0 0 10px 0;
+            ">{{ user.get_full_name|default:user.username }}</h2>
+            <p style="color: #888; margin: 5px 0; font-size: 16px;">📧 {{ user.email }}</p>
+            {% if user.phone %}
+            <p style="color: #888; margin: 5px 0; font-size: 16px;">📱 {{ user.phone }}</p>
+            {% endif %}
+        </div>
+
+        <div style="text-align: right;">
+            <p style="color: #666; font-size: 14px; margin: 0;">Активные бронирования</p>
+            <p class="active-count" style="
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 48px;
+                color: #c9a962;
+                margin: 10px 0 0 0;
+                font-weight: bold;
+            ">{{ active_count|default:0 }}</p>
+        </div>
+    </div>
+
+    <!-- Заголовок раздела -->
+    <h2 style="
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 42px;
+        color: #c9a962;
+        margin-bottom: 40px;
+        text-align: center;
+    ">Мои бронирования</h2>
+
+    {% if active_count > 0 %}
+    <!-- Сетка бронирований (только активные) -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 30px; margin-bottom: 50px;">
+        {% for reservation in user_reservations %}
+            {% if reservation.status != 'cancelled' %}
+            <div data-reservation-id="{{ reservation.pk }}" style="
+                background: #111;
+                border: 1px solid #1a1a1a;
+                border-radius: 10px;
+                padding: 30px;
+                transition: all 0.3s;
+                position: relative;
+                overflow: hidden;
+            " onmouseover="this.style.borderColor='#c9a962'; this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 30px rgba(201, 169, 98, 0.2)'"
+               onmouseout="this.style.borderColor='#1a1a1a'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+
+                <!-- Индикатор статуса -->
+                <div style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 5px;
+                    height: 100%;
+                    background: {% if reservation.is_paid %}#49cc90{% else %}#f39c12{% endif %};
+                "></div>
+
+                <!-- Дата и время -->
+                <div style="margin-bottom: 20px; padding-left: 15px;">
+                    <h3 style="
+                        font-family: 'Cormorant Garamond', serif;
+                        font-size: 28px;
+                        color: #fff;
+                        margin: 0 0 10px 0;
+                    ">
+                        {{ reservation.reservation_date|date:"d E Y" }}
+                    </h3>
+                    <p style="
+                        font-size: 20px;
+                        color: #c9a962;
+                        margin: 0;
+                        font-weight: 600;
+                    ">🕐 {{ reservation.reservation_time }}</p>
+                </div>
+
+                <!-- Информация -->
+                <div style="
+                    background: #0a0a0a;
+                    padding: 20px;
+                    border-radius: 5px;
+                    margin-bottom: 20px;
+                    padding-left: 15px;
+                ">
+                    <p style="color: #888; margin: 8px 0; font-size: 14px;">
+                        <strong style="color: #c9a962;">👤 Имя:</strong> {{ reservation.guest_name }}
+                    </p>
+                    <p style="color: #888; margin: 8px 0; font-size: 14px;">
+                        <strong style="color: #c9a962;">📱 Телефон:</strong> {{ reservation.guest_phone }}
+                    </p>
+                    <p style="color: #888; margin: 8px 0; font-size: 14px;">
+                        <strong style="color: #c9a962;">📧 Email:</strong> {{ reservation.guest_email }}
+                    </p>
+                    <p style="color: #888; margin: 8px 0; font-size: 14px;">
+                        <strong style="color: #c9a962;">👥 Гостей:</strong> {{ reservation.guests_count }}
+                    </p>
+                    <p style="color: #888; margin: 8px 0; font-size: 14px;">
+                        <strong style="color: #c9a962;">📋 Статус:</strong> {{ reservation.get_status_display }}
+                    </p>
+                    {% if reservation.special_requests %}
+                    <p style="color: #888; margin: 8px 0; font-size: 14px;">
+                        <strong style="color: #c9a962;">💬 Пожелания:</strong> {{ reservation.special_requests }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- Статус оплаты и действия -->
+                <div style="padding-left: 15px;">
+                    <span style="
+                        display: inline-block;
+                        padding: 8px 20px;
+                        border-radius: 5px;
+                        font-size: 12px;
+                        text-transform: uppercase;
+                        font-weight: 600;
+                        letter-spacing: 1px;
+                        background: {% if reservation.is_paid %}#49cc90{% else %}#f39c12{% endif %};
+                        color: #fff;
+                        margin-bottom: 15px;
+                    ">
+                        {% if reservation.is_paid %}✓ Оплачено{% else %}⏳ Не оплачено{% endif %}
+                    </span>
+
+                    {% if not reservation.is_paid %}
+                    <button type="button"
+                            class="cancel-btn"
+                            data-reservation-id="{{ reservation.pk }}"
+                            data-reservation-date="{{ reservation.reservation_date|date:'d E Y' }}"
+                            style="
+                                background: #e74c3c;
+                                color: #fff;
+                                border: none;
+                                padding: 12px 30px;
+                                font-family: 'Montserrat', sans-serif;
+                                font-size: 12px;
+                                font-weight: 600;
+                                letter-spacing: 2px;
+                                text-transform: uppercase;
+                                cursor: pointer;
+                                border-radius: 5px;
+                                transition: background 0.3s;
+                            "
+                            onmouseover="this.style.background='#c0392b'"
+                            onmouseout="this.style.background='#e74c3c'"
+                            onclick="confirmCancellation(this)">
+                        Отменить бронь
+                    </button>
+                    {% else %}
+                    <p style="color: #666; font-size: 13px; margin: 0;">
+                        ℹ️ Оплаченную бронь нельзя отменить онлайн
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- Нет активных бронирований -->
+    <div style="
+        text-align: center;
+        padding: 80px 40px;
+        background: #111;
+        border: 1px solid #1a1a1a;
+        border-radius: 10px;
+        margin-bottom: 50px;
+    ">
+        <div style="font-size: 80px; margin-bottom: 20px;">✅</div>
+        <h3 style="
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            color: #c9a962;
+            margin: 0 0 15px 0;
+        ">Нет активных бронирований</h3>
+        <p style="color: #888; font-size: 16px; margin-bottom: 30px;">
+            Забронируйте столик прямо сейчас!
+        </p>
+        <a href="{% url 'reservation' %}" style="
+            display: inline-block;
+            padding: 15px 40px;
+            background: #c9a962;
+            color: #000;
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-radius: 5px;
+            transition: background 0.3s;
+        " onmouseover="this.style.background='#d4b978'" onmouseout="this.style.background='#c9a962'">
+            Забронировать столик
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Модальное окно успешной отмены -->
+<div id="cancellationModal" style="
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+">
+    <div style="
+        background: #111;
+        border: 2px solid #e74c3c;
+        padding: 60px;
+        text-align: center;
+        max-width: 500px;
+        border-radius: 10px;
+        box-shadow: 0 0 50px rgba(231, 76, 60, 0.3);
+        animation: fadeInUp 0.5s ease-out;
+    ">
+        <div style="
+            width: 80px;
+            height: 80px;
+            background: #e74c3c;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #000;
+        ">✕</div>
+
+        <h2 style="
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        ">Бронь отменена</h2>
+
+        <p style="
+            color: #888;
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        ">
+            Ваше бронирование успешно отменено.<br>
+            На email отправлено подтверждение.
+        </p>
+
+        <button onclick="closeCancellationModal()" style="
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            padding: 15px 40px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s;
+        " onmouseover="this.style.background='#c0392b'" onmouseout="this.style.background='#e74c3c'">
+            Закрыть
+        </button>
+    </div>
+</div>
+
+<script>
+// Подтверждение отмены брони
+function confirmCancellation(button) {
+    const reservationDate = button.dataset.reservationDate;
+
+    if (confirm(`Вы уверены, что хотите отменить бронирование от ${reservationDate}?`)) {
+        cancelReservation(button.dataset.reservationId, button);
+    }
+}
+
+// AJAX отмена брони
+async function cancelReservation(reservationId, button) {
+    try {
+        const response = await fetch(`/reservation/${reservationId}/cancel/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Показываем модальное окно
+            document.getElementById('cancellationModal').style.display = 'flex';
+
+            // Находим карточку и плавно удаляем
+            const card = button.closest('[data-reservation-id]');
+            if (card) {
+                card.style.opacity = '0';
+                card.style.transform = 'translateX(-20px)';
+                card.style.transition = 'all 0.3s';
+
+                setTimeout(() => {
+                    card.remove();
+                    updateActiveCount();
+                }, 300);
+            }
+        } else {
+            alert(data.message || 'Ошибка при отмене бронирования');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Произошла ошибка. Пожалуйста, попробуйте позже.');
+    }
+}
+
+// Закрытие модального окна
+function closeCancellationModal() {
+    document.getElementById('cancellationModal').style.display = 'none';
+    location.reload();
+}
+
+// Обновление счетчика активных бронирований
+function updateActiveCount() {
+    const cards = document.querySelectorAll('[data-reservation-id]');
+    const countElement = document.querySelector('.active-count');
+    if (countElement) {
+        countElement.textContent = cards.length;
+    }
+}
+
+// Получение CSRF токена
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

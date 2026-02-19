@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 
 
@@ -57,8 +59,25 @@ class Reservation(models.Model):
     reservation_date = models.DateField(verbose_name="Дата бронирования")
     reservation_time = models.TimeField(verbose_name="Время бронирования")
     guests_count = models.IntegerField(default=2, verbose_name="Количество гостей")
-    status = models.CharField(max_length=20, default='pending', choices=STATUS_CHOICES, verbose_name="Статус")
+
+    status = models.CharField(
+        max_length=20,
+        default='pending',
+        choices=STATUS_CHOICES,
+        verbose_name="Статус"
+    )
+
+    # Уникальный токен для подтверждения
+    confirmation_token = models.CharField(
+        max_length=100,
+        unique=True,
+        blank=True,
+        null=True,
+        verbose_name="Токен подтверждения"
+    )
+
     special_requests = models.TextField(null=True, blank=True, verbose_name="Особые пожелания")
+    is_paid = models.BooleanField(default=False, verbose_name="Оплачено")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
@@ -70,6 +89,13 @@ class Reservation(models.Model):
     def __str__(self):
         return f"{self.guest_name} - {self.reservation_date} {self.reservation_time}"
 
+    def save(self, *args, **kwargs):
+        # Генерируем токен при создании
+        if not self.confirmation_token:
+            import uuid
+            self.confirmation_token = str(uuid.uuid4())
+            print(f"Generated token: {self.confirmation_token}")  # Для отладки
+        super().save(*args, **kwargs)
 
 class User(models.Model):
     """Пользователь системы"""
@@ -89,32 +115,3 @@ class User(models.Model):
 
     def __str__(self):
         return self.email
-
-class Reservation(models.Model):
-    """Бронирование столиков"""
-    STATUS_CHOICES = [
-        ('pending', 'Ожидает подтверждения'),
-        ('confirmed', 'Подтверждено'),
-        ('cancelled', 'Отменено'),
-        ('completed', 'Завершено'),
-    ]
-
-    guest_name = models.CharField(max_length=100, verbose_name="Имя гостя")
-    guest_phone = models.CharField(max_length=20, verbose_name="Телефон")
-    guest_email = models.CharField(max_length=200, verbose_name="Email")
-    reservation_date = models.DateField(verbose_name="Дата бронирования")
-    reservation_time = models.TimeField(verbose_name="Время бронирования")
-    guests_count = models.IntegerField(default=2, verbose_name="Количество гостей")
-    status = models.CharField(max_length=20, default='pending', choices=STATUS_CHOICES, verbose_name="Статус")
-    special_requests = models.TextField(null=True, blank=True, verbose_name="Особые пожелания")
-    is_paid = models.BooleanField(default=False, verbose_name="Оплачено")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
-
-    class Meta:
-        verbose_name = "Бронирование"
-        verbose_name_plural = "Бронирования"
-        db_table = "reservations"
-
-    def __str__(self):
-        return f"{self.guest_name} - {self.reservation_date} {self.reservation_time}"

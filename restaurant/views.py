@@ -1,5 +1,9 @@
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views import View
 from rest_framework import viewsets, status, filters
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -19,6 +23,7 @@ from .serializers import (
 )
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from .utils import send_reservation_email, send_cancellation_email
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -54,7 +59,6 @@ class ReservationViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             return ReservationCreateSerializer
         return ReservationSerializer
-
 
 
 class RegisterView(APIView):
@@ -98,12 +102,10 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
+
 @api_view(['GET'])
 def api_root(request):
-    """
-    Корневой endpoint API.
-    Показывает доступные endpoints
-    """
+    """Корневой endpoint API."""
     return Response({
         'categories': '/api/categories/',
         'menu': '/api/menu/',
@@ -111,6 +113,7 @@ def api_root(request):
         'auth/register': '/api/auth/register/',
         'auth/login': '/api/auth/login/',
     }, headers={'Allow': 'GET, HEAD, OPTIONS'})
+
 
 class IndexView(TemplateView):
     """Контроллер для главной страницы."""
@@ -143,14 +146,152 @@ class ReservationView(CreateView):
               'guests_count', 'special_requests']
     success_url = reverse_lazy('reservation')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            # Показываем только активные бронирования
+            context['user_reservations'] = Reservation.objects.filter(
+                guest_email=self.request.user.email
+            ).exclude(status='cancelled').order_by('-reservation_date', '-reservation_time')[:10]
+        else:
+            context['user_reservations'] = []
+        return context
+
     def form_valid(self, form):
-        messages.success(self.request, 'Ваша заявка успешно отправлена!')
+        """Вызывается при успешной валидации формы"""
+        self.object = form.save(commit=False)
+        self.object.status = 'pending'
+        self.object.is_paid = False
+
+        # ✅ Генерируем токен
+        if not self.object.confirmation_token:
+            import uuid
+            self.object.confirmation_token = str(uuid.uuid4())
+
+        self.object.save()
+
+        #  ОТПРАВЛЯЕМ ПОДТВЕРЖДЕНИЕ
+        try:
+            send_reservation_email(self.object)
+        except Exception as e:
+            print(f"Email error: {e}")
+
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': True, 'message': 'Бронирование успешно создано!'})
+
+        messages.success(self.request, 'Бронирование успешно создано!')
         return super().form_valid(form)
 
     def form_invalid(self, form):
+        """Вызывается при ошибке валидации"""
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': False,
+                'errors': form.errors,
+            }, status=400)
         messages.error(self.request, 'Пожалуйста, исправьте ошибки в форме.')
         return super().form_invalid(form)
 
+
+@api_view(['GET'])
+def get_booked_times(request):
+    """Возвращает забронированные времена для конкретной даты"""
+    date_str = request.GET.get('date')
+
+    if not date_str:
+        return Response({'error': 'Дата не указана'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Получаем все бронирования на эту дату со статусом pending или confirmed
+    booked = Reservation.objects.filter(
+        reservation_date=date_str,
+        status__in=['pending', 'confirmed']  # Только активные брони
+    ).values_list('reservation_time', flat=True)
+
+    # Преобразуем в список строк
+    booked_times = [time.strftime('%H:%M') for time in booked]
+
+    return Response({'booked_times': booked_times})
+
 class ApiDocsView(TemplateView):
-    """Красивая страница документации API"""
+    """Страница документации API"""
     template_name = 'restaurant/api.html'
+
+
+class CancelReservationView(View):
+    """Контроллер для отмены бронирования."""
+
+    def post(self, request, pk):
+        reservation = get_object_or_404(Reservation, pk=pk)
+
+        if reservation.is_paid:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Нельзя отменить оплаченную бронь.'
+                }, status=400)
+            messages.error(request, 'Нельзя отменить оплаченную бронь.')
+            return redirect('profile')
+
+        # Отменяем бронь
+        reservation.status = 'cancelled'
+        reservation.save()
+
+        # Отправляем email
+        try:
+            send_cancellation_email(reservation)
+        except Exception as e:
+            print(f"Email error: {e}")
+
+        # AJAX ответ
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': True,
+                'message': 'Бронирование успешно отменено!'
+            })
+
+        messages.success(request, 'Бронирование отменено.')
+        return redirect('profile')
+
+
+class ConfirmReservationView(View):
+    """Контроллер для подтверждения бронирования по токену."""
+
+    def get(self, request, token):
+        try:
+            reservation = Reservation.objects.get(confirmation_token=token)
+
+            # Проверяем, не отменена ли уже
+            if reservation.status == 'cancelled':
+                messages.error(request, 'Это бронирование было отменено.')
+                return redirect('reservation')
+
+            # Проверяем, не подтверждена ли уже
+            if reservation.status == 'confirmed':
+                messages.success(request, 'Ваша бронь уже подтверждена. Ждем вас!')
+                return redirect('reservation')
+
+            # Подтверждаем бронь
+            reservation.status = 'confirmed'
+            reservation.save()
+
+            messages.success(request, 'Ваша бронь подтверждена! Ждем вас!')
+            return redirect('reservation')
+
+        except Reservation.DoesNotExist:
+            messages.error(request, 'Неверная ссылка подтверждения.')
+            return redirect('reservation')
+
+@login_required
+def profile_view(request):
+    """Личный кабинет пользователя"""
+    # ✅ Получаем ТОЛЬКО активные бронирования (не отмененные)
+    user_reservations = Reservation.objects.filter(
+        guest_email=request.user.email
+    ).exclude(status='cancelled').order_by('-reservation_date', '-reservation_time')
+
+    active_count = user_reservations.count()
+
+    return render(request, 'restaurant/profile.html', {
+        'user_reservations': user_reservations,
+        'active_count': active_count
+    })

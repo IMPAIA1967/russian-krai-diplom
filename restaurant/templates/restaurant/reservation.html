@@ -1,60 +1,351 @@
 {% extends 'restaurant/base.html' %}
 
-{% block title %}Бронирование - Русский Край{% endblock %}
+{% block title %}Бронирование - Ресторан "Русский Край"{% endblock %}
 
 {% block content %}
-<section class="hero" style="height: 50vh; background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1514362545857-3bc16c6c7d1e?w=1920');">
-    <h1 class="hero-logo" style="font-size: 100px;">БРОНЬ</h1>
-    <p class="hero-subtitle">ЗАБРОНИРОВАТЬ СТОЛИК</p>
+<style>
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+.reservation-hero {
+    height: 50vh;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)),
+                url('https://png.pngtree.com/background/20230522/original/pngtree-dark-kitchen-in-a-black-room-picture-image_2688478.jpg') center/cover no-repeat fixed;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.reservation-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 100px;
+    font-weight: 700;
+    letter-spacing: 15px;
+    background: linear-gradient(135deg, #4a4a4a 0%, #8b7355 25%, #c9b896 50%, #8b7355 75%, #4a4a4a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 0.3s forwards;
+}
+
+.reservation-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    color: #d4d4d4;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 0.6s forwards;
+}
+
+.reservation-container { max-width: 800px; margin: 0 auto 100px; padding: 0 50px; }
+
+.reservation-form {
+    background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 60px;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: fadeInUp 1s ease-out 0.9s forwards;
+}
+
+.form-group { margin-bottom: 30px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+
+.form-label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #c9a962;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 15px;
+    background: #0a0a0a;
+    border: 1px solid #2a2a2a;
+    color: #e0e0e0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: #c9a962;
+}
+.form-textarea { resize: vertical; min-height: 120px; }
+
+.time-picker-wrapper { position: relative; }
+.time-picker-button {
+    width: 100%;
+    padding: 15px;
+    background: #0a0a0a;
+    border: 1px solid #2a2a2a;
+    color: #e0e0e0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s;
+}
+.time-picker-button:hover { border-color: #c9a962; }
+
+.time-picker-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 9999;
+    justify-content: center;
+    align-items: flex-end;
+}
+.time-picker-content {
+    background: #1a1a1a;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    border-radius: 20px 20px 0 0;
+    padding: 30px;
+    animation: slideUp 0.3s ease-out;
+}
+.time-picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.time-picker-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    color: #c9a962;
+}
+.time-picker-close {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 28px;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    line-height: 1;
+}
+.time-picker-slots {
+    max-height: 300px;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 10px 0;
+}
+.time-slot {
+    padding: 15px;
+    background: #0a0a0a;
+    border: 2px solid #2a2a2a;
+    color: #e0e0e0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+.time-slot:hover {
+    background: #1a1a1a;
+    border-color: #c9a962;
+    transform: translateY(-2px);
+}
+.time-slot.selected {
+    background: #c9a962;
+    color: #000;
+    border-color: #c9a962;
+    font-weight: 600;
+}
+.time-slot:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: #1a1a1a;
+    border-color: #333;
+    color: #666;
+}
+.time-slot:disabled:hover {
+    transform: none;
+    border-color: #333;
+}
+
+.time-picker-done {
+    width: 100%;
+    padding: 15px;
+    background: #c9a962;
+    color: #000;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(135deg, #c9a962 0%, #d4b978 100%);
+    color: #000;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 20px;
+}
+.submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(201, 169, 98, 0.4);
+}
+.submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.success-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+}
+.success-modal-content {
+    background: #111;
+    border: 2px solid #c9a962;
+    padding: 60px;
+    text-align: center;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 0 50px rgba(201, 169, 98, 0.3);
+    animation: fadeInUp 0.5s ease-out;
+}
+.success-icon {
+    width: 80px;
+    height: 80px;
+    background: #49cc90;
+    border-radius: 50%;
+    margin: 0 auto 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    color: #000;
+}
+.success-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    color: #c9a962;
+    margin-bottom: 20px;
+}
+.success-text {
+    color: #888;
+    font-size: 16px;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+.success-btn {
+    background: #c9a962;
+    color: #000;
+    border: none;
+    padding: 15px 40px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+.success-btn:hover { background: #d4b978; }
+
+.ornament {
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #c9b896, transparent);
+    margin: 30px auto;
+}
+
+.no-slots-message {
+    color: #888;
+    text-align: center;
+    grid-column: 1 / -1;
+    padding: 20px;
+    font-size: 14px;
+}
+</style>
+
+<!-- Герой секция -->
+<section class="reservation-hero">
+    <h1 class="reservation-title">БРОНЬ</h1>
+    <p class="reservation-subtitle">Забронировать столик</p>
 </section>
 
-<div class="container" style="max-width: 700px; padding: 80px 50px;">
-    <form method="POST" style="
-        background: #111;
-        padding: 60px;
-        border: 1px solid #1a1a1a;
-    ">
+<!-- Форма -->
+<div class="reservation-container">
+    <form class="reservation-form" id="reservationForm" method="POST">
         {% csrf_token %}
 
-        <div style="margin-bottom: 30px;">
-            <label style="display: block; margin-bottom: 10px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #c9a962;">Ваше имя *</label>
-            <input type="text" name="guest_name" required
-                   style="width: 100%; padding: 15px; background: #0a0a0a; border: 1px solid #2a2a2a; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 16px;"
-                   placeholder="Иван Иванов">
+        <div class="form-group">
+            <label class="form-label">Ваше имя *</label>
+            <input type="text" class="form-input" name="guest_name" required placeholder="Иван Иванов">
         </div>
 
-        <div style="margin-bottom: 30px;">
-            <label style="display: block; margin-bottom: 10px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #c9a962;">Телефон *</label>
-            <input type="tel" name="guest_phone" required
-                   style="width: 100%; padding: 15px; background: #0a0a0a; border: 1px solid #2a2a2a; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 16px;"
-                   placeholder="+7 (999) 000-00-00">
-        </div>
-
-        <div style="margin-bottom: 30px;">
-            <label style="display: block; margin-bottom: 10px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #c9a962;">Email *</label>
-            <input type="email" name="guest_email" required
-                   style="width: 100%; padding: 15px; background: #0a0a0a; border: 1px solid #2a2a2a; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 16px;"
-                   placeholder="email@example.com">
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
-            <div>
-                <label style="display: block; margin-bottom: 10px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #c9a962;">Дата *</label>
-                <input type="date" name="reservation_date" required
-                       style="width: 100%; padding: 15px; background: #0a0a0a; border: 1px solid #2a2a2a; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 16px;">
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Телефон *</label>
+                <input type="tel" class="form-input" name="guest_phone" required placeholder="+7 (999) 000-00-00">
             </div>
-
-            <div>
-                <label style="display: block; margin-bottom: 10px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #c9a962;">Время *</label>
-                <input type="time" name="reservation_time" required
-                       style="width: 100%; padding: 15px; background: #0a0a0a; border: 1px solid #2a2a2a; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 16px;">
+            <div class="form-group">
+                <label class="form-label">Email *</label>
+                <input type="email" class="form-input" name="guest_email" required placeholder="email@example.com">
             </div>
         </div>
 
-        <div style="margin-bottom: 30px;">
-            <label style="display: block; margin-bottom: 10px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #c9a962;">Количество гостей *</label>
-            <select name="guests_count" required
-                    style="width: 100%; padding: 15px; background: #0a0a0a; border: 1px solid #2a2a2a; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 16px;">
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Дата *</label>
+                <input type="date" class="form-input" name="reservation_date" id="dateInput" required min="{% now 'Y-m-d' %}" onchange="updateTimeSlots()">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Время *</label>
+                <div class="time-picker-wrapper">
+                    <button type="button" class="time-picker-button" id="timePickerButton" onclick="openTimePicker()">
+                        <span id="selectedTimeText">Выбрать время</span>
+                    </button>
+                    <input type="hidden" name="reservation_time" id="timeInput" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Количество гостей *</label>
+            <select class="form-select" name="guests_count" required>
                 <option value="1">1 гость</option>
                 <option value="2" selected>2 гостя</option>
                 <option value="3">3 гостя</option>
@@ -66,29 +357,233 @@
             </select>
         </div>
 
-        <div style="margin-bottom: 40px;">
-            <label style="display: block; margin-bottom: 10px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #c9a962;">Особые пожелания</label>
-            <textarea name="special_requests" rows="4"
-                      style="width: 100%; padding: 15px; background: #0a0a0a; border: 1px solid #2a2a2a; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 16px; resize: vertical;"
-                      placeholder="Например: день рождения, аллергия на орехи..."></textarea>
+        <div class="form-group">
+            <label class="form-label">Особые пожелания</label>
+            <textarea class="form-textarea" name="special_requests" placeholder="Например: день рождения, аллергия на орехи..."></textarea>
         </div>
 
-        <button type="submit" style="
-            width: 100%;
-            padding: 20px;
-            background: #c9a962;
-            color: #000;
-            border: none;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: background 0.3s;
-        " onmouseover="this.style.background='#d4b978'" onmouseout="this.style.background='#c9a962'">
-            Забронировать
-        </button>
+        <button type="submit" class="submit-btn" id="submitBtn">Забронировать</button>
     </form>
 </div>
+
+<!-- Time Picker Modal -->
+<div id="timePickerModal" class="time-picker-modal">
+    <div class="time-picker-content">
+        <div class="time-picker-header">
+            <h3 class="time-picker-title">Выберите время</h3>
+            <button type="button" class="time-picker-close" onclick="closeTimePicker()">&times;</button>
+        </div>
+        <p id="workHoursInfo" style="color: #888; margin-bottom: 15px; font-size: 14px;"></p>
+        <div id="timeSlots" class="time-picker-slots"></div>
+        <button type="button" class="time-picker-done" onclick="closeTimePicker()">Готово</button>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="successModal" class="success-modal">
+    <div class="success-modal-content">
+        <div class="success-icon">✓</div>
+        <h2 class="success-title">Спасибо за бронь!</h2>
+        <p class="success-text">
+            Ваше бронирование успешно создано.<br>
+            На email отправлено подтверждение.<br><br>
+            Перенаправляем в личный кабинет...
+        </p>
+        <button class="success-btn" onclick="goToProfile()">В профиль</button>
+    </div>
+</div>
+
+<script>
+// Режим работы ресторана
+const workHours = {
+    1: { start: 8, end: 23 }, 2: { start: 8, end: 23 }, 3: { start: 8, end: 23 },
+    4: { start: 8, end: 23 }, 5: { start: 8, end: 24 }, 6: { start: 8, end: 24 },
+    0: { start: 8, end: 23 }
+};
+
+let currentDate = null;
+let bookedTimes = [];
+
+// Получение CSRF токена из cookie
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Загрузка забронированных времен с сервера
+async function loadBookedTimes(date) {
+    try {
+        const response = await fetch(`/api/booked-times/?date=${date}`);
+        const data = await response.json();
+        bookedTimes = data.booked_times || [];
+        console.log('Забронированные времена:', bookedTimes);
+    } catch (error) {
+        console.error('Ошибка загрузки занятых времен:', error);
+        bookedTimes = [];
+    }
+}
+
+// Обновление доступного времени при изменении даты
+function updateTimeSlots() {
+    const dateInput = document.getElementById('dateInput');
+    if (!dateInput.value) return;
+    currentDate = new Date(dateInput.value);
+    loadBookedTimes(dateInput.value);
+}
+
+// Открытие выбора времени
+async function openTimePicker() {
+    const dateInput = document.getElementById('dateInput');
+    if (!dateInput.value) {
+        alert('Сначала выберите дату!');
+        dateInput.focus();
+        return;
+    }
+    currentDate = new Date(dateInput.value);
+    await loadBookedTimes(dateInput.value);
+    showTimePicker();
+}
+
+// Показ модального окна с временем
+function showTimePicker() {
+    const modal = document.getElementById('timePickerModal');
+    const timeSlots = document.getElementById('timeSlots');
+    const workInfo = document.getElementById('workHoursInfo');
+
+    const dayOfWeek = currentDate.getDay();
+    const hours = workHours[dayOfWeek];
+
+    timeSlots.innerHTML = '';
+
+    const dayNames = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+    const endTime = hours.end === 24 ? '00:00' : hours.end + ':00';
+    workInfo.textContent = dayNames[dayOfWeek] + ': 08:00 - ' + endTime;
+
+    let availableCount = 0;
+
+    // Генерируем слоты каждые 30 минут
+    for (let h = hours.start; h < hours.end; h++) {
+        const hour = h < 10 ? '0' + h : h;
+        if (createTimeSlot(timeSlots, hour + ':00')) availableCount++;
+        if (createTimeSlot(timeSlots, hour + ':30')) availableCount++;
+    }
+
+    // Добавляем последний час (если не 00:00)
+    if (hours.end < 24) {
+        const lastHour = hours.end < 10 ? '0' + hours.end : hours.end;
+        if (createTimeSlot(timeSlots, lastHour + ':00')) availableCount++;
+    }
+
+    // Если все времена заняты
+    if (availableCount === 0) {
+        timeSlots.innerHTML = '<p class="no-slots-message">Все времена на эту дату заняты</p>';
+    }
+
+    modal.style.display = 'flex';
+}
+
+// Создание слота времени (возвращает true если слот создан)
+function createTimeSlot(container, time) {
+    // Если время занято — не создаем слот
+    if (bookedTimes.includes(time)) {
+        return false;
+    }
+
+    const slot = document.createElement('button');
+    slot.type = 'button';
+    slot.className = 'time-slot';
+    slot.textContent = time;
+    slot.onclick = function() { selectTime(time); };
+    container.appendChild(slot);
+    return true;
+}
+
+// Выбор времени
+function selectTime(time) {
+    document.getElementById('selectedTimeText').textContent = time;
+    document.getElementById('timeInput').value = time;
+    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+    if (event && event.target) {
+        event.target.classList.add('selected');
+    }
+    closeTimePicker();
+}
+
+// Закрытие выбора времени
+function closeTimePicker() {
+    document.getElementById('timePickerModal').style.display = 'none';
+}
+
+document.getElementById('timePickerModal').addEventListener('click', function(e) {
+    if (e.target === this) closeTimePicker();
+});
+
+// AJAX обработка формы
+document.getElementById('reservationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const submitBtn = document.getElementById('submitBtn');
+    const csrfToken = getCookie('csrftoken');
+
+    submitBtn.innerHTML = 'Отправка...';
+    submitBtn.disabled = true;
+
+    fetch('{% url "reservation" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': csrfToken
+        }
+    })
+    .then(async response => {
+        // Проверяем, JSON ли ответ
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            return response.json();
+        } else {
+            // Если не JSON, значит ошибка сервера
+            const text = await response.text();
+            console.error('Non-JSON response:', text);
+            throw new Error('Сервер вернул не JSON ответ');
+        }
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        if (data.success) {
+            document.getElementById('successModal').style.display = 'flex';
+            this.reset();
+            document.getElementById('selectedTimeText').textContent = 'Выбрать время';
+            setTimeout(() => {
+                window.location.href = '{% url "profile" %}';
+            }, 3000);
+        } else {
+            alert('Ошибка: ' + (data.message || 'Попробуйте позже'));
+            submitBtn.innerHTML = 'Забронировать';
+            submitBtn.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Произошла ошибка. Пожалуйста, попробуйте позже.');
+        submitBtn.innerHTML = 'Забронировать';
+        submitBtn.disabled = false;
+    });
+});
+
+function goToProfile() {
+    window.location.href = '{% url "profile" %}';
+}
+</script>
 {% endblock %}

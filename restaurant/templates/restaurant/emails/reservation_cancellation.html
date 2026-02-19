@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333; }
+        .header { background: #1a1a1a; color: #e74c3c; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { background: #f9f9f9; padding: 40px 30px; border: 1px solid #e0e0e0; }
+        .section { margin-bottom: 30px; background: #fff; padding: 20px; border-radius: 5px; border-left: 4px solid #e74c3c; }
+        .section h3 { color: #e74c3c; margin-top: 0; }
+        .detail { margin: 10px 0; color: #555; }
+        .detail strong { color: #1a1a1a; }
+        .footer { background: #1a1a1a; color: #888; padding: 20px; text-align: center; border-radius: 0 0 10px 10px; font-size: 14px; }
+        .status { display: inline-block; padding: 8px 20px; background: #e74c3c; color: #fff; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>❌ Бронирование отменено</h1>
+        <p style="margin: 10px 0 0 0; color: #d4d4d4;">Ресторан "Русский Край"</p>
+    </div>
+    <div class="content">
+        <p style="text-align: center; color: #888; margin-bottom: 30px;">Ваше бронирование было отменено.</p>
+        <div class="section">
+            <h3>👤 Данные гостя:</h3>
+            <div class="detail"><strong>Имя:</strong> {{ reservation.guest_name }}</div>
+            <div class="detail"><strong>Телефон:</strong> {{ reservation.guest_phone }}</div>
+            <div class="detail"><strong>Email:</strong> {{ reservation.guest_email }}</div>
+        </div>
+        <div class="section">
+            <h3>📅 Детали бронирования:</h3>
+            <div class="detail"><strong>Дата:</strong> {{ reservation.reservation_date }}</div>
+            <div class="detail"><strong>Время:</strong> {{ reservation.reservation_time }}</div>
+            <div class="detail"><strong>Гостей:</strong> {{ reservation.guests_count }}</div>
+            <div class="detail"><strong>Статус:</strong> <span class="status">{{ reservation.get_status_display }}</span></div>
+        </div>
+    </div>
+    <div class="footer">
+        <p>Ресторан "Русский Край"<br>Традиционная русская кухня</p>
+    </div>
+</body>
+</html>

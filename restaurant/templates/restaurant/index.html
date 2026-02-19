@@ -3,9 +3,221 @@
 {% block title %}Русский Край - Традиционная кухня{% endblock %}
 
 {% block content %}
+<style>
+/* Анимация появления букв */
+@keyframes letterFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes floatAnimation {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Michelin звезда с тёплым благородным светом */
+.michelin-star {
+    font-size: 40px;
+    text-align: center;
+    margin-bottom: 20px;
+    animation: floatAnimation 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.8))
+            drop-shadow(0 0 40px rgba(184, 134, 11, 0.4));
+}
+
+/* Герой секция - твой оригинальный фон */
+.hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.hero-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 150px;
+    font-weight: 700;
+    letter-spacing: 20px;
+    /* Тёмное золото с серебром - видно на тёмном фоне */
+    background: linear-gradient(135deg, #4a4a4a 0%, #8b7355 25%, #c9b896 50%, #8b7355 75%, #4a4a4a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+    filter: drop-shadow(0 0 30px rgba(201, 184, 150, 0.3));
+}
+
+.letter {
+    display: inline-block;
+    opacity: 0;
+    animation: letterFadeIn 1s ease-out forwards;
+    background: linear-gradient(135deg, #4a4a4a 0%, #8b7355 25%, #c9b896 50%, #8b7355 75%, #4a4a4a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px;
+    font-weight: 300;
+    letter-spacing: 10px;
+    text-transform: uppercase;
+    /* Более светлый оттенок */
+    color: #d4d4d4;
+    margin: 20px 0;
+    opacity: 0;
+    animation: letterFadeIn 1s ease-out 0.6s forwards;
+    text-shadow: 0 0 20px rgba(212, 212, 212, 0.3);
+}
+
+.hero-description {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+    /* Светлый текст - хорошая видимость */
+    color: #e0e0e0;
+    margin: 30px 0;
+    opacity: 0;
+    animation: letterFadeIn 1s ease-out 0.9s forwards;
+    text-shadow: 0 0 15px rgba(224, 224, 224, 0.2);
+}
+
+.hero-phone {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    /* Тёплое золото */
+    background: linear-gradient(135deg, #c9b896, #e8dcc8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 20px 0;
+    opacity: 0;
+    animation: letterFadeIn 1s ease-out 1.2s forwards;
+    filter: drop-shadow(0 0 10px rgba(201, 184, 150, 0.4));
+}
+
+.hero-hours {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    /* Светло-серый для читаемости */
+    color: #c0c0c0;
+    margin-top: 30px;
+    opacity: 0;
+    animation: letterFadeIn 1s ease-out 1.5s forwards;
+}
+
+/* Секция "О нас" */
+.about {
+    max-width: 1000px;
+    margin: 100px auto;
+    padding: 60px 50px;
+    text-align: center;
+    background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+}
+
+.about h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 700;
+    /* Тёмное золото с бронзой - благородно и видно */
+    background: linear-gradient(135deg, #5a4a3a 0%, #9a7b4f 30%, #c9b896 50%, #9a7b4f 70%, #5a4a3a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 30px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+    letter-spacing: 3px;
+}
+
+.about h2.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.about h2 .letter {
+    display: inline-block;
+    opacity: 0;
+    animation: letterFadeIn 0.8s ease-out forwards;
+    background: linear-gradient(135deg, #5a4a3a 0%, #9a7b4f 30%, #c9b896 50%, #9a7b4f 70%, #5a4a3a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.ornament {
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #9a7b4f, transparent);
+    margin: 30px auto;
+    opacity: 0;
+    transform: scaleX(0);
+    transition: all 0.8s ease-out;
+}
+
+.ornament.visible {
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+.about p {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    line-height: 2;
+    /* Светло-серый для хорошей читаемости */
+    color: #d0d0d0;
+    max-width: 800px;
+    margin: 0 auto;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out 0.2s;
+}
+
+.about p.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .hero-logo {
+        font-size: 80px;
+    }
+
+    .about h2 {
+        font-size: 36px;
+    }
+}
+</style>
+
+<!-- Подключаем дорогие шрифты -->
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
 <!-- Герой секция -->
 <section class="hero">
-    <h1 class="hero-logo">РК</h1>
+    <!-- Michelin Star -->
+    <div class="michelin-star">⭐</div>
+
+    <!-- Логотип с анимацией букв -->
+    <h1 class="hero-logo" id="heroLogo"></h1>
+
     <p class="hero-subtitle">ЕДА И ДЕСЕРТЫ</p>
     <p class="hero-description">
         Традиционная русская кухня в современном исполнении.<br>
@@ -21,13 +233,64 @@
 
 <!-- Секция "О нас" -->
 <section class="about">
-    <h2>Русский Край</h2>
-    <div class="ornament"></div>
-    <p>
+    <h2 id="aboutTitle"></h2>
+    <div class="ornament" id="ornament1"></div>
+    <p id="aboutText">
         Ресторан, где традиции встречаются с современностью.
         Мы сохраняем аутентичность русской кухни, используя лучшие продукты
         от локальных фермеров и проверенных поставщиков.
     </p>
-    <div class="ornament"></div>
+    <div class="ornament" id="ornament2"></div>
 </section>
+
+<script>
+// Анимация появления букв логотипа "РК"
+const logoText = 'РК';
+const logoElement = document.getElementById('heroLogo');
+
+for (let i = 0; i < logoText.length; i++) {
+    const span = document.createElement('span');
+    span.className = 'letter';
+    span.textContent = logoText[i];
+    span.style.animationDelay = `${i * 0.4}s`;
+    logoElement.appendChild(span);
+}
+
+// Анимация появления букв заголовка "Русский Край"
+const aboutTitleText = 'Русский Край';
+const aboutTitleElement = document.getElementById('aboutTitle');
+
+for (let i = 0; i < aboutTitleText.length; i++) {
+    const span = document.createElement('span');
+    span.className = 'letter';
+    span.textContent = aboutTitleText[i] === ' ' ? '\u00A0' : aboutTitleText[i];
+    span.style.animationDelay = `${i * 0.08}s`;
+    aboutTitleElement.appendChild(span);
+}
+
+// Анимация при скролле
+const observerOptions = {
+    threshold: 0.2,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, observerOptions);
+
+// Наблюдаем за элементами
+const aboutTitle = document.getElementById('aboutTitle');
+const ornament1 = document.getElementById('ornament1');
+const aboutText = document.getElementById('aboutText');
+const ornament2 = document.getElementById('ornament2');
+
+if (aboutTitle) observer.observe(aboutTitle);
+if (ornament1) observer.observe(ornament1);
+if (aboutText) observer.observe(aboutText);
+if (ornament2) observer.observe(ornament2);
+</script>
 {% endblock %}
