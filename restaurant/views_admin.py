@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.db.models import Count, Sum
 from django.utils import timezone
 from datetime import timedelta
-from .models import Reservation
+from .models import Reservation, TeamMember
 from .decorators import admin_required
 from .utils import send_reservation_email, send_cancellation_email
 
@@ -162,3 +162,109 @@ def admin_statistics(request):
     }
 
     return render(request, 'restaurant/admin/statistics.html', context)
+
+
+def admin_team(request):
+    """
+    Страница управления командой ресторана.
+    """
+    if not (request.user.is_authenticated and request.user.is_staff_user):
+        messages.error(request, 'Доступ запрещён. Только для сотрудников.')
+        return redirect('index')
+
+    team_members = TeamMember.objects.all().order_by('order', 'last_name')
+
+    return render(request, 'restaurant/admin/team.html', {
+        'team_members': team_members,
+        'page_title': 'Команда ресторана',
+    })
+
+
+def admin_add_team_member(request):
+    """
+    Добавление нового члена команды.
+    """
+    if not (request.user.is_authenticated and request.user.is_staff_user):
+        messages.error(request, 'Доступ запрещён. Только для сотрудников.')
+        return redirect('index')
+
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        position = request.POST.get('position', '').strip()
+        custom_position = request.POST.get('custom_position', '').strip()
+        photo = request.POST.get('photo', '').strip()
+        description = request.POST.get('description', '').strip()
+        bio = request.POST.get('bio', '').strip()
+        instagram = request.POST.get('instagram', '').strip()
+        telegram = request.POST.get('telegram', '').strip()
+        order = request.POST.get('order', 0)
+        is_active = request.POST.get('is_active') == 'on'
+
+        if not first_name or not last_name or not position or not description:
+            messages.error(request, 'Заполните обязательные поля: Имя, Фамилия, Должность, Описание')
+            return redirect('admin_team')
+
+        TeamMember.objects.create(
+            first_name=first_name,
+            last_name=last_name,
+            position=position,
+            custom_position=custom_position or None,
+            photo=photo or None,
+            description=description,
+            bio=bio or None,
+            instagram=instagram or None,
+            telegram=telegram or None,
+            order=int(order) if order else 0,
+            is_active=is_active
+        )
+
+        messages.success(request, f'Член команды {first_name} {last_name} добавлен!')
+        return redirect('admin_team')
+
+    return redirect('admin_team')
+
+
+def admin_edit_team_member(request, pk):
+    """
+    Редактирование члена команды.
+    """
+    if not (request.user.is_authenticated and request.user.is_staff_user):
+        messages.error(request, 'Доступ запрещён. Только для сотрудников.')
+        return redirect('index')
+
+    member = get_object_or_404(TeamMember, pk=pk)
+
+    if request.method == 'POST':
+        member.first_name = request.POST.get('first_name', '').strip()
+        member.last_name = request.POST.get('last_name', '').strip()
+        member.position = request.POST.get('position', '').strip()
+        member.custom_position = request.POST.get('custom_position', '').strip() or None
+        member.photo = request.POST.get('photo', '').strip() or None
+        member.description = request.POST.get('description', '').strip()
+        member.bio = request.POST.get('bio', '').strip() or None
+        member.instagram = request.POST.get('instagram', '').strip() or None
+        member.telegram = request.POST.get('telegram', '').strip() or None
+        member.order = int(request.POST.get('order', 0))
+        member.is_active = request.POST.get('is_active') == 'on'
+        member.save()
+
+        messages.success(request, f'Данные {member.first_name} {member.last_name} обновлены!')
+        return redirect('admin_team')
+
+    return redirect('admin_team')
+
+
+def admin_delete_team_member(request, pk):
+    """
+    Удаление члена команды.
+    """
+    if not (request.user.is_authenticated and request.user.is_staff_user):
+        messages.error(request, 'Доступ запрещён. Только для сотрудников.')
+        return redirect('index')
+
+    member = get_object_or_404(TeamMember, pk=pk)
+    member.delete()
+
+    messages.success(request, f'Член команды удалён!')
+    return redirect('admin_team')
