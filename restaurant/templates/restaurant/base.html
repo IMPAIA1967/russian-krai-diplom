@@ -155,24 +155,28 @@
 <body>
     <!-- Навигация -->
     <nav class="navbar">
-        <a href="{% url 'index' %}" class="logo">Русский Край</a>
-        <ul class="nav-menu">
-            <li><a href="{% url 'index' %}">Главная</a></li>
-            <li><a href="{% url 'menu' %}">Меню</a></li>
-            <li><a href="{% url 'reservation' %}">Бронирование</a></li>
+    <a href="{% url 'index' %}" class="logo">Русский Край</a>
+    <ul class="nav-menu">
+        <li><a href="{% url 'index' %}">Главная</a></li>
+        <li><a href="{% url 'menu' %}">Меню</a></li>
+        <li><a href="{% url 'reservation' %}">Бронирование</a></li>
 
-            <!-- ✅ НОВОЕ: Ссылка на админ-панель (только для сотрудников) -->
-            {% if user.is_authenticated and user.is_staff_user %}
-            <li>
-                <a href="{% url 'admin_dashboard' %}" style="color: #c9a962;">🍽️ Админ-панель</a>
-            </li>
-            {% endif %}
+        <!-- Кнопка для АДМИНОВ -->
+        {% if user.is_authenticated and user.is_staff_user %}
+        <li>
+            <a href="{% url 'admin_dashboard' %}" style="color: #c9a962;">🍽️ Админ-панель</a>
+        </li>
+        {% endif %}
 
-            {% if user.is_authenticated %}
-            <li><a href="{% url 'profile' %}" style="color: #c9a962;">👤 Профиль</a></li>
-            {% endif %}
-        </ul>
-    </nav>
+        <!-- Кнопки для АВТОРИЗОВАННЫХ и ГОСТЕЙ -->
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'profile' %}" style="color: #c9a962;">👤 Профиль</a></li>
+        <li><a href="{% url 'logout' %}" style="color: #e74c3c;">🚪 Выход</a></li>
+        {% else %}
+        <li><a href="{% url 'profile' %}" style="color: #888;">👤 Войти</a></li>
+        {% endif %}
+    </ul>
+</nav>
 
     <!-- Основной контент -->
     <main class="main-content">

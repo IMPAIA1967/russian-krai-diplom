@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
@@ -24,6 +25,7 @@ from .serializers import (
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .utils import send_reservation_email, send_cancellation_email
+from django.contrib.auth import login
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -149,7 +151,6 @@ class ReservationView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.is_authenticated:
-            # Показываем только активные бронирования
             context['user_reservations'] = Reservation.objects.filter(
                 guest_email=self.request.user.email
             ).exclude(status='cancelled').order_by('-reservation_date', '-reservation_time')[:10]
@@ -163,14 +164,12 @@ class ReservationView(CreateView):
         self.object.status = 'pending'
         self.object.is_paid = False
 
-        # ✅ Генерируем токен
         if not self.object.confirmation_token:
             import uuid
             self.object.confirmation_token = str(uuid.uuid4())
 
         self.object.save()
 
-        #  ОТПРАВЛЯЕМ ПОДТВЕРЖДЕНИЕ
         try:
             send_reservation_email(self.object)
         except Exception as e:
@@ -201,20 +200,20 @@ def get_booked_times(request):
     if not date_str:
         return Response({'error': 'Дата не указана'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Получаем все бронирования на эту дату со статусом pending или confirmed
     booked = Reservation.objects.filter(
         reservation_date=date_str,
-        status__in=['pending', 'confirmed']  # Только активные брони
+        status__in=['pending', 'confirmed']
     ).values_list('reservation_time', flat=True)
 
-    # Преобразуем в список строк
     booked_times = [time.strftime('%H:%M') for time in booked]
 
     return Response({'booked_times': booked_times})
 
+
 class ApiDocsView(TemplateView):
     """Страница документации API"""
     template_name = 'restaurant/api.html'
+
 
 class CancelReservationView(View):
     """Контроллер для отмены бронирования."""
@@ -231,17 +230,14 @@ class CancelReservationView(View):
             messages.error(request, 'Нельзя отменить оплаченную бронь.')
             return redirect('profile')
 
-        # Отменяем бронь
         reservation.status = 'cancelled'
         reservation.save()
 
-        # Отправляем email
         try:
             send_cancellation_email(reservation)
         except Exception as e:
             print(f"Email error: {e}")
 
-        # AJAX ответ
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({
                 'success': True,
@@ -259,17 +255,14 @@ class ConfirmReservationView(View):
         try:
             reservation = Reservation.objects.get(confirmation_token=token)
 
-            # Проверяем, не отменена ли уже
             if reservation.status == 'cancelled':
                 messages.error(request, 'Это бронирование было отменено.')
                 return redirect('reservation')
 
-            # Проверяем, не подтверждена ли уже
             if reservation.status == 'confirmed':
                 messages.success(request, 'Ваша бронь уже подтверждена. Ждем вас!')
                 return redirect('reservation')
 
-            # Подтверждаем бронь
             reservation.status = 'confirmed'
             reservation.save()
 
@@ -280,14 +273,13 @@ class ConfirmReservationView(View):
             messages.error(request, 'Неверная ссылка подтверждения.')
             return redirect('reservation')
 
-@login_required
+
 def profile_view(request):
     """
-    Личный кабинет пользователя
-    Если не авторизован — показывает страницу входа/регистрации
-    Если авторизован — показывает профиль с бронированиями
+    Личный кабинет пользователя.
+    Если не авторизован — показывает страницу входа/регистрации.
+    Если авторизован — показывает профиль с бронированиями.
     """
-    # Если пользователь авторизован — показываем профиль
     if request.user.is_authenticated:
         user_reservations = Reservation.objects.filter(
             guest_email=request.user.email
@@ -301,24 +293,21 @@ def profile_view(request):
             'page_title': 'Профиль',
         })
 
-    # Если не авторизован — показываем страницу входа/регистрации
     return render(request, 'restaurant/auth/login_register.html', {
         'page_title': 'Вход / Регистрация',
     })
 
 
-@login_required
 def logout_view(request):
     """Выход из аккаунта"""
     from django.contrib.auth import logout
     logout(request)
-    messages.success(request, 'Вы вышли из аккаунта.')
     return redirect('index')
 
 
 def auth_register_login(request):
     """
-    Единая страница регистрации и входа по телефону
+    Единая страница регистрации и входа по телефону.
     """
     if request.user.is_authenticated:
         return redirect('profile')
@@ -329,39 +318,40 @@ def auth_register_login(request):
         first_name = request.POST.get('first_name', '').strip()
         last_name = request.POST.get('last_name', '').strip()
 
-        # Проверяем что все поля заполнены
         if not phone or not email:
             messages.error(request, 'Пожалуйста, заполните все обязательные поля.')
             return redirect('profile')
 
-        # Ищем пользователя по телефону
         user = User.objects.filter(phone=phone).first()
 
         if user:
-            #  Пользователь существует — входим
-            messages.success(request, f'С возвращением, {user.first_name or user.email}!')
-
-            # Аутентифицируем (без пароля — по телефону)
+            # Стандартный login()
             from django.contrib.auth import login
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request, user)
 
             return redirect('profile')
         else:
             #  Новый пользователь — регистрируем
-            user = User.objects.create_user(
+            from django.contrib.auth.hashers import make_password
+            user = User.objects.create(
                 email=email,
                 phone=phone,
                 first_name=first_name,
                 last_name=last_name,
+                password=make_password(None),
                 role='guest',
                 is_active=True
             )
-
             messages.success(request, 'Регистрация успешна! Добро пожаловать!')
 
-            # Автоматически входим
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            # Стандартный login()
+            from django.contrib.auth import login
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request, user)
 
             return redirect('profile')
 
-    return redirect('profile')
+    return render(request, 'restaurant/auth/login_register.html', {
+        'page_title': 'Вход / Регистрация',
+    })

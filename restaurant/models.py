@@ -1,6 +1,30 @@
 import uuid
-
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+
+
+class UserManager(BaseUserManager):
+    """Кастомный менеджер для модели User"""
+
+    def create_user(self, email, phone=None, password=None, **extra_fields):
+        if not email:
+            raise ValueError('Email обязателен')
+
+        user = self.model(
+            email=email,
+            phone=phone,
+            **extra_fields
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, phone=None, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('role', 'admin')
+
+        return self.create_user(email, phone, password, **extra_fields)
 
 
 class Category(models.Model):
@@ -67,7 +91,6 @@ class Reservation(models.Model):
         verbose_name="Статус"
     )
 
-    # Уникальный токен для подтверждения
     confirmation_token = models.CharField(
         max_length=100,
         unique=True,
@@ -90,15 +113,12 @@ class Reservation(models.Model):
         return f"{self.guest_name} - {self.reservation_date} {self.reservation_time}"
 
     def save(self, *args, **kwargs):
-        # Генерируем токен при создании
         if not self.confirmation_token:
-            import uuid
             self.confirmation_token = str(uuid.uuid4())
-            print(f"Generated token: {self.confirmation_token}")  # Для отладки
         super().save(*args, **kwargs)
 
 
-class User(models.Model):
+class User(AbstractBaseUser, PermissionsMixin):
     """Пользователь системы"""
     ROLE_CHOICES = [
         ('admin', 'Администратор'),
@@ -107,12 +127,10 @@ class User(models.Model):
     ]
 
     email = models.CharField(max_length=200, unique=True, verbose_name="Email")
-    password = models.CharField(max_length=128, verbose_name="Пароль")
     first_name = models.CharField(max_length=100, null=True, blank=True, verbose_name="Имя")
     last_name = models.CharField(max_length=100, null=True, blank=True, verbose_name="Фамилия")
     phone = models.CharField(max_length=20, unique=True, null=True, blank=True, verbose_name="Телефон")
 
-    # Поле для роли пользователя
     role = models.CharField(
         max_length=20,
         choices=ROLE_CHOICES,
@@ -122,8 +140,14 @@ class User(models.Model):
 
     is_admin = models.BooleanField(default=False, verbose_name="Администратор")
     is_active = models.BooleanField(default=True, verbose_name="Активен")
+    is_staff = models.BooleanField(default=False, verbose_name="Staff статус")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['phone']
 
     class Meta:
         verbose_name = "Пользователь"
@@ -137,4 +161,62 @@ class User(models.Model):
     def is_staff_user(self):
         """Проверка: является ли пользователем ресторана (админ или сотрудник)"""
         return self.role in ['admin', 'staff'] or self.is_admin
+
+
+class TeamMember(models.Model):
+    """Члены команды ресторана"""
+    POSITION_CHOICES = [
+        ('chef', 'Шеф-повар'),
+        ('sous_chef', 'Су-шеф'),
+        ('manager', 'Менеджер'),
+        ('waiter', 'Официант'),
+        ('bartender', 'Бармен'),
+        ('host', 'Хостес'),
+        ('other', 'Другое'),
+    ]
+
+    first_name = models.CharField(max_length=100, verbose_name="Имя")
+    last_name = models.CharField(max_length=100, verbose_name="Фамилия")
+    position = models.CharField(
+        max_length=20,
+        choices=POSITION_CHOICES,
+        verbose_name="Должность"
+    )
+    custom_position = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+        verbose_name="Другая должность"
+    )
+    photo = models.CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+        verbose_name="Фото (URL)"
+    )
+    description = models.TextField(verbose_name="Описание")
+    bio = models.TextField(null=True, blank=True, verbose_name="Биография")
+
+    # Социальные сети
+    instagram = models.CharField(max_length=200, null=True, blank=True, verbose_name="Instagram")
+    telegram = models.CharField(max_length=200, null=True, blank=True, verbose_name="Telegram")
+
+    # Порядок отображения
+    order = models.IntegerField(default=0, verbose_name="Порядок отображения")
+    is_active = models.BooleanField(default=True, verbose_name="Активен")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+
+    class Meta:
+        verbose_name = "Член команды"
+        verbose_name_plural = "Члены команды"
+        db_table = "team_members"
+        ordering = ['order', 'last_name', 'first_name']
+
+    def __str__(self):
+        position = self.get_position_display()
+        if self.custom_position:
+            position = self.custom_position
+        return f"{self.first_name} {self.last_name} - {position}"
+
 

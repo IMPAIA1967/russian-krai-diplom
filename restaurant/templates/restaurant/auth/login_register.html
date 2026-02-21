@@ -159,7 +159,6 @@
         <!-- Форма входа/регистрации -->
         <form method="POST" action="{% url 'auth_register_login' %}">
             {% csrf_token %}
-
             <div class="form-group">
                 <label class="form-label">Телефон *</label>
                 <input type="tel" name="phone" class="form-input" required placeholder="+7 (999) 000-00-00">

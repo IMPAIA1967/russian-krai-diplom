@@ -193,3 +193,5 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 SITE_URL = 'http://127.0.0.1:8000'
+
+AUTH_USER_MODEL = 'restaurant.User'

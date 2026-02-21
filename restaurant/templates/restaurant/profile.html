@@ -46,7 +46,7 @@
                 font-size: 36px;
                 color: #c9a962;
                 margin: 0 0 10px 0;
-            ">{{ user.get_full_name|default:user.username }}</h2>
+            ">{{ user.get_full_name|default:user.email }}</h2>
             <p style="color: #888; margin: 5px 0; font-size: 16px;">📧 {{ user.email }}</p>
             {% if user.phone %}
             <p style="color: #888; margin: 5px 0; font-size: 16px;">📱 {{ user.phone }}</p>
