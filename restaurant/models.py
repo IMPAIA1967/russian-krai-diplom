@@ -255,5 +255,3 @@ class Review(models.Model):
     def get_rating_stars(self):
         """Возвращает строку со звёздами"""
         return '⭐' * self.rating
-
-

@@ -1,6 +1,3 @@
-from django.conf import settings
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
@@ -12,7 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.views.generic import TemplateView, CreateView
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
-from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth.hashers import check_password
 from .models import Category, MenuItem, Reservation, User, Review
 from .serializers import (
     CategorySerializer,
@@ -25,7 +22,6 @@ from .serializers import (
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .utils import send_reservation_email, send_cancellation_email
-from django.contrib.auth import login
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
