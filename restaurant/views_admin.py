@@ -1,0 +1,164 @@
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.db.models import Count, Sum
+from django.utils import timezone
+from datetime import timedelta
+from .models import Reservation
+from .decorators import admin_required
+from .utils import send_reservation_email, send_cancellation_email
+
+
+@admin_required
+def admin_dashboard(request):
+    """
+    Главная страница админ-панели
+    Показывает брони на сегодня и завтра
+    """
+    today = timezone.now().date()
+    tomorrow = today + timedelta(days=1)
+
+    # Бронирования на сегодня
+    today_reservations = Reservation.objects.filter(
+        reservation_date=today
+    ).order_by('reservation_time')
+
+    # Бронирования на завтра
+    tomorrow_reservations = Reservation.objects.filter(
+        reservation_date=tomorrow
+    ).order_by('reservation_time')
+
+    # Статистика за неделю
+    week_ago = today - timedelta(days=7)
+    total_week = Reservation.objects.filter(
+        reservation_date__gte=week_ago
+    ).count()
+    confirmed_week = Reservation.objects.filter(
+        reservation_date__gte=week_ago,
+        status='confirmed'
+    ).count()
+    cancelled_week = Reservation.objects.filter(
+        reservation_date__gte=week_ago,
+        status='cancelled'
+    ).count()
+
+    context = {
+        'today_reservations': today_reservations,
+        'tomorrow_reservations': tomorrow_reservations,
+        'today_count': today_reservations.count(),
+        'tomorrow_count': tomorrow_reservations.count(),
+        'total_week': total_week,
+        'confirmed_week': confirmed_week,
+        'cancelled_week': cancelled_week,
+    }
+
+    return render(request, 'restaurant/admin/dashboard.html', context)
+
+
+@admin_required
+def admin_reservations(request):
+    """
+    Страница всех бронирований
+    Можно фильтровать по статусу и дате
+    """
+    # Получаем все брони
+    reservations = Reservation.objects.all().order_by('-reservation_date', '-reservation_time')
+
+    # Фильтры из GET-параметров
+    status = request.GET.get('status')
+    date_from = request.GET.get('date_from')
+    date_to = request.GET.get('date_to')
+
+    if status:
+        reservations = reservations.filter(status=status)
+    if date_from:
+        reservations = reservations.filter(reservation_date__gte=date_from)
+    if date_to:
+        reservations = reservations.filter(reservation_date__lte=date_to)
+
+    context = {
+        'reservations': reservations,
+        'STATUS_CHOICES': Reservation.STATUS_CHOICES,
+    }
+
+    return render(request, 'restaurant/admin/reservations.html', context)
+
+
+@admin_required
+def admin_confirm_reservation(request, pk):
+    """
+    Подтверждение брони администратором
+    """
+    reservation = get_object_or_404(Reservation, pk=pk)
+
+    if reservation.status == 'cancelled':
+        messages.error(request, 'Нельзя подтвердить отменённую бронь.')
+    else:
+        reservation.status = 'confirmed'
+        reservation.save()
+        messages.success(request, f'Бронь #{pk} подтверждена!')
+
+        # Отправляем email клиенту
+        try:
+            send_reservation_email(reservation)
+        except Exception as e:
+            print(f"Email error: {e}")
+
+    return redirect('admin_reservations')
+
+
+@admin_required
+def admin_cancel_reservation(request, pk):
+    """
+    Отмена брони администратором
+    """
+    reservation = get_object_or_404(Reservation, pk=pk)
+
+    reservation.status = 'cancelled'
+    reservation.save()
+    messages.success(request, f'Бронь #{pk} отменена.')
+
+    # Отправляем email клиенту
+    try:
+        send_cancellation_email(reservation)
+    except Exception as e:
+        print(f"Email error: {e}")
+
+    return redirect('admin_reservations')
+
+
+@admin_required
+def admin_statistics(request):
+    """
+    Страница статистики и аналитики
+    """
+    today = timezone.now().date()
+    month_ago = today - timedelta(days=30)
+
+    # Статистика по статусам
+    status_stats = Reservation.objects.values('status').annotate(
+        count=Count('id')
+    )
+
+    # Статистика по дням (последние 30 дней)
+    daily_stats = Reservation.objects.filter(
+        reservation_date__gte=month_ago
+    ).values('reservation_date').annotate(
+        count=Count('id'),
+        guests=Sum('guests_count')
+    ).order_by('reservation_date')
+
+    # Общая статистика
+    total_reservations = Reservation.objects.count()
+    total_guests = Reservation.objects.aggregate(
+        total=Sum('guests_count')
+    )['total'] or 0
+
+    context = {
+        'status_stats': status_stats,
+        'daily_stats': daily_stats,
+        'total_reservations': total_reservations,
+        'total_guests': total_guests,
+    }
+
+    return render(request, 'restaurant/admin/statistics.html', context)
