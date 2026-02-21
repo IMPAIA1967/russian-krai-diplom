@@ -21,6 +21,8 @@ from .views import (
     ApiDocsView,
     CancelReservationView, profile_view, get_booked_times, ConfirmReservationView,
 )
+from .views_admin import admin_dashboard, admin_reservations, admin_statistics, admin_cancel_reservation, \
+    admin_confirm_reservation
 
 
 @api_view(['GET'])
@@ -55,6 +57,11 @@ web_urlpatterns = [
     path('reservation/confirm/<str:token>/', ConfirmReservationView.as_view(), name='confirm_reservation'),
     path('profile/', profile_view, name='profile'),
     path('api/booked-times/', get_booked_times, name='get_booked_times'),
+    path('admin-panel/', admin_dashboard, name='admin_dashboard'),
+    path('admin-panel/reservations/', admin_reservations, name='admin_reservations'),
+    path('admin-panel/reservations/<int:pk>/confirm/', admin_confirm_reservation, name='admin_confirm_reservation'),
+    path('admin-panel/reservations/<int:pk>/cancel/', admin_cancel_reservation, name='admin_cancel_reservation'),
+    path('admin-panel/statistics/', admin_statistics, name='admin_statistics'),
 ]
 
 api_urlpatterns = [
