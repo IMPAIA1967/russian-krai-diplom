@@ -110,6 +110,7 @@ class User(models.Model):
     password = models.CharField(max_length=128, verbose_name="Пароль")
     first_name = models.CharField(max_length=100, null=True, blank=True, verbose_name="Имя")
     last_name = models.CharField(max_length=100, null=True, blank=True, verbose_name="Фамилия")
+    phone = models.CharField(max_length=20, unique=True, null=True, blank=True, verbose_name="Телефон")
 
     # Поле для роли пользователя
     role = models.CharField(
@@ -136,3 +137,4 @@ class User(models.Model):
     def is_staff_user(self):
         """Проверка: является ли пользователем ресторана (админ или сотрудник)"""
         return self.role in ['admin', 'staff'] or self.is_admin
+

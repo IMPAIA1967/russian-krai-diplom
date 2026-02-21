@@ -1,0 +1,202 @@
+{% extends 'restaurant/base.html' %}
+
+{% block title %}Вход / Регистрация - Ресторан "Русский Край"{% endblock %}
+
+{% block content %}
+<style>
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .auth-container {
+        max-width: 500px;
+        margin: 100px auto;
+        padding: 0 20px;
+    }
+
+    .auth-card {
+        background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+        border: 1px solid #c9a962;
+        border-radius: 10px;
+        padding: 50px;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .auth-header h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 42px;
+        color: #c9a962;
+        margin: 0 0 10px 0;
+    }
+
+    .auth-header p {
+        color: #888;
+        font-size: 16px;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 12px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: #c9a962;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 15px;
+        background: #0a0a0a;
+        border: 1px solid #2a2a2a;
+        color: #e0e0e0;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 16px;
+        border-radius: 5px;
+        transition: all 0.3s;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #c9a962;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 18px;
+        background: linear-gradient(135deg, #c9a962 0%, #d4b978 100%);
+        color: #000;
+        border: none;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 10px;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(201, 169, 98, 0.4);
+    }
+
+    .info-box {
+        background: #0a0a0a;
+        border: 1px solid #2a2a2a;
+        padding: 20px;
+        border-radius: 5px;
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    .info-box p {
+        color: #888;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .messages {
+        margin-bottom: 20px;
+    }
+
+    .message {
+        padding: 15px 20px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+
+    .message-success {
+        background: rgba(73, 204, 144, 0.2);
+        border: 1px solid #49cc90;
+        color: #49cc90;
+    }
+
+    .message-error {
+        background: rgba(231, 76, 60, 0.2);
+        border: 1px solid #e74c3c;
+        color: #e74c3c;
+    }
+</style>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>🍽️ Вход</h1>
+            <p>Войдите или зарегистрируйтесь для просмотра бронирований</p>
+        </div>
+
+        <!-- Сообщения -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {% if message.tags == 'success' %}message-success{% else %}message-error{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Форма входа/регистрации -->
+        <form method="POST" action="{% url 'auth_register_login' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">Телефон *</label>
+                <input type="tel" name="phone" class="form-input" required placeholder="+7 (999) 000-00-00">
+                <p style="color: #666; font-size: 12px; margin-top: 8px;">
+                    🔑 Телефон используется для входа в аккаунт
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email *</label>
+                <input type="email" name="email" class="form-input" required placeholder="email@example.com">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Имя</label>
+                    <input type="text" name="first_name" class="form-input" placeholder="Иван">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Фамилия</label>
+                    <input type="text" name="last_name" class="form-input" placeholder="Иванов">
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                Войти / Зарегистрироваться
+            </button>
+        </form>
+
+        <!-- Информация -->
+        <div class="info-box">
+            <p>
+                <strong style="color: #c9a962;">ℹ️ Как это работает:</strong><br><br>
+                Если вы уже регистрировались — просто введите телефон, и вы войдёте в аккаунт.<br><br>
+                Если вы новый пользователь — будет создан новый аккаунт автоматически.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

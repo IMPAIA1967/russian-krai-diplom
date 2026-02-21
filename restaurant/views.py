@@ -282,15 +282,86 @@ class ConfirmReservationView(View):
 
 @login_required
 def profile_view(request):
-    """Личный кабинет пользователя"""
-    # ✅ Получаем ТОЛЬКО активные бронирования (не отмененные)
-    user_reservations = Reservation.objects.filter(
-        guest_email=request.user.email
-    ).exclude(status='cancelled').order_by('-reservation_date', '-reservation_time')
+    """
+    Личный кабинет пользователя
+    Если не авторизован — показывает страницу входа/регистрации
+    Если авторизован — показывает профиль с бронированиями
+    """
+    # Если пользователь авторизован — показываем профиль
+    if request.user.is_authenticated:
+        user_reservations = Reservation.objects.filter(
+            guest_email=request.user.email
+        ).exclude(status='cancelled').order_by('-reservation_date', '-reservation_time')
 
-    active_count = user_reservations.count()
+        active_count = user_reservations.count()
 
-    return render(request, 'restaurant/profile.html', {
-        'user_reservations': user_reservations,
-        'active_count': active_count
+        return render(request, 'restaurant/profile.html', {
+            'user_reservations': user_reservations,
+            'active_count': active_count,
+            'page_title': 'Профиль',
+        })
+
+    # Если не авторизован — показываем страницу входа/регистрации
+    return render(request, 'restaurant/auth/login_register.html', {
+        'page_title': 'Вход / Регистрация',
     })
+
+
+@login_required
+def logout_view(request):
+    """Выход из аккаунта"""
+    from django.contrib.auth import logout
+    logout(request)
+    messages.success(request, 'Вы вышли из аккаунта.')
+    return redirect('index')
+
+
+def auth_register_login(request):
+    """
+    Единая страница регистрации и входа по телефону
+    """
+    if request.user.is_authenticated:
+        return redirect('profile')
+
+    if request.method == 'POST':
+        phone = request.POST.get('phone', '').strip()
+        email = request.POST.get('email', '').strip()
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+
+        # Проверяем что все поля заполнены
+        if not phone or not email:
+            messages.error(request, 'Пожалуйста, заполните все обязательные поля.')
+            return redirect('profile')
+
+        # Ищем пользователя по телефону
+        user = User.objects.filter(phone=phone).first()
+
+        if user:
+            #  Пользователь существует — входим
+            messages.success(request, f'С возвращением, {user.first_name or user.email}!')
+
+            # Аутентифицируем (без пароля — по телефону)
+            from django.contrib.auth import login
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+            return redirect('profile')
+        else:
+            #  Новый пользователь — регистрируем
+            user = User.objects.create_user(
+                email=email,
+                phone=phone,
+                first_name=first_name,
+                last_name=last_name,
+                role='guest',
+                is_active=True
+            )
+
+            messages.success(request, 'Регистрация успешна! Добро пожаловать!')
+
+            # Автоматически входим
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+            return redirect('profile')
+
+    return redirect('profile')
