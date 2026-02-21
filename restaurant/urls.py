@@ -20,6 +20,7 @@ from .views import (
     ReservationView,
     ApiDocsView,
     CancelReservationView, profile_view, get_booked_times, ConfirmReservationView, logout_view, auth_register_login,
+    submit_review,
 )
 from .views_admin import admin_dashboard, admin_reservations, admin_statistics, admin_cancel_reservation, \
     admin_confirm_reservation, admin_team, admin_edit_team_member, admin_add_team_member, admin_delete_team_member
@@ -74,6 +75,8 @@ web_urlpatterns = [
     path('admin-panel/team/<int:pk>/delete/', admin_delete_team_member, name='admin_delete_team_member'),
 
     path('api/booked-times/', get_booked_times, name='get_booked_times'),
+    # Маршрут для отправки отзыва
+    path('review/submit/', submit_review, name='submit_review'),
 ]
 
 api_urlpatterns = [
