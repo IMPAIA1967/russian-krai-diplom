@@ -10,20 +10,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Montserrat', sans-serif;
             background-color: #0a0a0a;
             color: #ffffff;
             overflow-x: hidden;
         }
-
-        /* Навигация */
         .navbar {
             position: fixed;
             top: 0;
@@ -35,12 +28,10 @@
             z-index: 1000;
             background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
         }
-
         .logo {
             font-family: 'Playfair Display', serif;
             font-size: 28px;
             font-weight: 700;
-            /* Тёмное золото с бронзой - как на главной */
             background: linear-gradient(135deg, #5a4a3a 0%, #9a7b4f 30%, #c9b896 50%, #9a7b4f 70%, #5a4a3a 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -50,18 +41,8 @@
             transition: all 0.3s;
             display: inline-block;
         }
-
-        .logo:hover {
-            opacity: 0.85;
-            transform: translateY(-2px);
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 40px;
-            list-style: none;
-        }
-
+        .logo:hover { opacity: 0.85; transform: translateY(-2px); }
+        .nav-menu { display: flex; gap: 40px; list-style: none; }
         .nav-menu a {
             color: #fff;
             text-decoration: none;
@@ -72,7 +53,6 @@
             transition: color 0.3s;
             position: relative;
         }
-
         .nav-menu a::after {
             content: '';
             position: absolute;
@@ -83,15 +63,8 @@
             background: #c9a962;
             transition: width 0.3s;
         }
-
-        .nav-menu a:hover::after {
-            width: 100%;
-        }
-
-        .nav-menu a:hover {
-            color: #c9a962;
-        }
-
+        .nav-menu a:hover::after { width: 100%; }
+        .nav-menu a:hover { color: #c9a962; }
         .hero {
             height: 100vh;
             background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)),
@@ -103,7 +76,6 @@
             text-align: center;
             position: relative;
         }
-
         .hero-logo {
             font-family: 'Cormorant Garamond', serif;
             font-size: 180px;
@@ -112,7 +84,6 @@
             margin-bottom: 20px;
             text-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-
         .hero-subtitle {
             font-size: 28px;
             font-weight: 300;
@@ -120,7 +91,6 @@
             margin-bottom: 40px;
             color: #c9a962;
         }
-
         .hero-description {
             font-size: 18px;
             max-width: 600px;
@@ -128,49 +98,28 @@
             margin-bottom: 50px;
             font-weight: 300;
         }
-
         .hero-phone {
             font-size: 32px;
             font-weight: 600;
             margin-bottom: 20px;
             letter-spacing: 3px;
         }
-
         .hero-hours {
             font-size: 16px;
             font-weight: 300;
             letter-spacing: 2px;
             line-height: 2;
         }
-
-        .hero-hours div {
-            margin: 5px 0;
-        }
-
-        /* Основной контент */
-        .main-content {
-            background: #0a0a0a;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 100px 50px;
-        }
-
-        /* Секция "О нас" */
-        .about {
-            text-align: center;
-            padding: 100px 0;
-        }
-
+        .hero-hours div { margin: 5px 0; }
+        .main-content { background: #0a0a0a; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 100px 50px; }
+        .about { text-align: center; padding: 100px 0; }
         .about h2 {
             font-family: 'Cormorant Garamond', serif;
             font-size: 48px;
             margin-bottom: 30px;
             color: #c9a962;
         }
-
         .about p {
             font-size: 18px;
             line-height: 2;
@@ -178,60 +127,23 @@
             margin: 0 auto;
             color: #b0b0b0;
         }
-
-        /* Подвал */
         .footer {
             background: #050505;
             padding: 50px;
             text-align: center;
             border-top: 1px solid #1a1a1a;
         }
-
-        .footer p {
-            color: #666;
-            font-size: 14px;
-            letter-spacing: 1px;
-        }
-
-        /* Адаптивность */
+        .footer p { color: #666; font-size: 14px; letter-spacing: 1px; }
         @media (max-width: 768px) {
-            .navbar {
-                padding: 20px 30px;
-            }
-
-            .logo {
-                font-size: 24px;
-                letter-spacing: 1px;
-            }
-
-            .nav-menu {
-                gap: 20px;
-            }
-
-            .nav-menu a {
-                font-size: 12px;
-            }
-
-            .hero-logo {
-                font-size: 100px;
-                letter-spacing: 10px;
-            }
-
-            .hero-subtitle {
-                font-size: 20px;
-                letter-spacing: 4px;
-            }
-
-            .hero-phone {
-                font-size: 24px;
-            }
-
-            .container {
-                padding: 50px 30px;
-            }
+            .navbar { padding: 20px 30px; }
+            .logo { font-size: 24px; letter-spacing: 1px; }
+            .nav-menu { gap: 20px; }
+            .nav-menu a { font-size: 12px; }
+            .hero-logo { font-size: 100px; letter-spacing: 10px; }
+            .hero-subtitle { font-size: 20px; letter-spacing: 4px; }
+            .hero-phone { font-size: 24px; }
+            .container { padding: 50px 30px; }
         }
-
-        /* Декоративные элементы - русские узоры */
         .ornament {
             width: 100px;
             height: 2px;
@@ -248,6 +160,14 @@
             <li><a href="{% url 'index' %}">Главная</a></li>
             <li><a href="{% url 'menu' %}">Меню</a></li>
             <li><a href="{% url 'reservation' %}">Бронирование</a></li>
+
+            <!-- ✅ НОВОЕ: Ссылка на админ-панель (только для сотрудников) -->
+            {% if user.is_authenticated and user.is_staff_user %}
+            <li>
+                <a href="{% url 'admin_dashboard' %}" style="color: #c9a962;">🍽️ Админ-панель</a>
+            </li>
+            {% endif %}
+
             {% if user.is_authenticated %}
             <li><a href="{% url 'profile' %}" style="color: #c9a962;">👤 Профиль</a></li>
             {% endif %}
