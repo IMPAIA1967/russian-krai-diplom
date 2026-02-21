@@ -195,6 +195,97 @@
     transform: translateY(0);
 }
 
+/* Секция: Наша команда */
+.team-section {
+    padding: 100px 20px;
+    background: linear-gradient(135deg, #0a0a0a 0%, #111 100%);
+    border-top: 1px solid #2a2a2a;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.team-card {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+}
+
+.team-card:hover {
+    transform: translateY(-10px);
+    border-color: #c9a962;
+}
+
+.team-photo {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    background: #1a1a1a;
+}
+
+.team-photo-placeholder {
+    width: 100%;
+    height: 350px;
+    background: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 80px;
+}
+
+.team-info {
+    padding: 25px;
+}
+
+.team-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    color: #c9a962;
+    margin: 0 0 10px 0;
+}
+
+.team-position {
+    color: #888;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 15px 0;
+}
+
+.team-description {
+    color: #e0e0e0;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.team-social {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.team-social a {
+    color: #c9a962;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.team-empty {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 60px;
+    color: #888;
+}
+
 /* Адаптивность */
 @media (max-width: 768px) {
     .hero-logo {
@@ -203,6 +294,10 @@
 
     .about h2 {
         font-size: 36px;
+    }
+
+    .team-grid {
+        grid-template-columns: 1fr;
     }
 }
 </style>
@@ -241,6 +336,64 @@
         от локальных фермеров и проверенных поставщиков.
     </p>
     <div class="ornament" id="ornament2"></div>
+</section>
+
+<!-- Секция: Наша команда -->
+<section class="team-section">
+    <div style="text-align: center; margin-bottom: 60px;">
+        <h2 style="
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 48px;
+            color: #c9a962;
+            margin: 0 0 20px 0;
+        ">Наша команда</h2>
+        <p style="color: #888; font-size: 18px; max-width: 600px; margin: 0 auto;">
+            Профессионалы своего дела, которые создают для вас незабываемую атмосферу
+            и готовят блюда с душой
+        </p>
+    </div>
+
+    <div class="team-grid">
+        {% for member in team_members %}
+        <div class="team-card">
+            {% if member.photo %}
+            <img src="{{ member.photo }}" alt="{{ member.first_name }} {{ member.last_name }}" class="team-photo">
+            {% else %}
+            <div class="team-photo-placeholder">👤</div>
+            {% endif %}
+
+            <div class="team-info">
+                <h3 class="team-name">{{ member.first_name }} {{ member.last_name }}</h3>
+
+                <p class="team-position">
+                    {% if member.custom_position %}
+                        {{ member.custom_position }}
+                    {% else %}
+                        {{ member.get_position_display }}
+                    {% endif %}
+                </p>
+
+                <p class="team-description">{{ member.description|truncatewords:20 }}</p>
+
+                {% if member.instagram or member.telegram %}
+                <div class="team-social">
+                    {% if member.instagram %}
+                    <a href="https://instagram.com/{{ member.instagram|cut:'@' }}" target="_blank">📷 Instagram</a>
+                    {% endif %}
+                    {% if member.telegram %}
+                    <a href="https://t.me/{{ member.telegram|cut:'@' }}" target="_blank">✈️ Telegram</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="team-empty">
+            <p style="font-size: 48px; margin: 0 0 20px 0;">👥</p>
+            <p>Раздел команды скоро появится</p>
+        </div>
+        {% endfor %}
+    </div>
 </section>
 
 <script>
