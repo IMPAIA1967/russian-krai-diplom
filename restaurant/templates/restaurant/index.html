@@ -6,26 +6,21 @@
 <style>
 /* Анимация появления букв */
 @keyframes letterFadeIn {
-    0% {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes floatAnimation {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-10px);
-    }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
 
-/* Michelin звезда с тёплым благородным светом */
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Michelin звезда */
 .michelin-star {
     font-size: 40px;
     text-align: center;
@@ -35,7 +30,7 @@
             drop-shadow(0 0 40px rgba(184, 134, 11, 0.4));
 }
 
-/* Герой секция - твой оригинальный фон */
+/* Герой секция */
 .hero {
     height: 100vh;
     display: flex;
@@ -141,10 +136,7 @@
     letter-spacing: 3px;
 }
 
-.about h2.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
+.about h2.visible { opacity: 1; transform: translateY(0); }
 
 .about h2 .letter {
     display: inline-block;
@@ -166,10 +158,7 @@
     transition: all 0.8s ease-out;
 }
 
-.ornament.visible {
-    opacity: 1;
-    transform: scaleX(1);
-}
+.ornament.visible { opacity: 1; transform: scaleX(1); }
 
 .about p {
     font-family: 'Montserrat', sans-serif;
@@ -183,10 +172,7 @@
     transition: all 0.8s ease-out 0.2s;
 }
 
-.about p.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
+.about p.visible { opacity: 1; transform: translateY(0); }
 
 /* Секция: Наша команда */
 .team-section {
@@ -211,73 +197,34 @@
     transition: transform 0.3s, border-color 0.3s;
 }
 
-.team-card:hover {
-    transform: translateY(-10px);
-    border-color: #c9a962;
-}
+.team-card:hover { transform: translateY(-10px); border-color: #c9a962; }
 
-.team-photo {
-    width: 100%;
-    height: 350px;
-    object-fit: cover;
-    background: #1a1a1a;
-}
+.team-photo { width: 100%; height: 350px; object-fit: cover; background: #1a1a1a; }
 
 .team-photo-placeholder {
-    width: 100%;
-    height: 350px;
-    background: #1a1a1a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #666;
-    font-size: 80px;
+    width: 100%; height: 350px; background: #1a1a1a;
+    display: flex; align-items: center; justify-content: center;
+    color: #666; font-size: 80px;
 }
 
-.team-info {
-    padding: 25px;
-}
+.team-info { padding: 25px; }
 
 .team-name {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 24px;
-    color: #c9a962;
-    margin: 0 0 10px 0;
+    font-size: 24px; color: #c9a962; margin: 0 0 10px 0;
 }
 
 .team-position {
-    color: #888;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin: 0 0 15px 0;
+    color: #888; font-size: 14px; text-transform: uppercase;
+    letter-spacing: 1px; margin: 0 0 15px 0;
 }
 
-.team-description {
-    color: #e0e0e0;
-    font-size: 14px;
-    line-height: 1.6;
-    margin: 0;
-}
+.team-description { color: #e0e0e0; font-size: 14px; line-height: 1.6; margin: 0; }
 
-.team-social {
-    margin-top: 20px;
-    display: flex;
-    gap: 10px;
-}
+.team-social { margin-top: 20px; display: flex; gap: 10px; }
+.team-social a { color: #c9a962; text-decoration: none; font-size: 14px; }
 
-.team-social a {
-    color: #c9a962;
-    text-decoration: none;
-    font-size: 14px;
-}
-
-.team-empty {
-    grid-column: 1/-1;
-    text-align: center;
-    padding: 60px;
-    color: #888;
-}
+.team-empty { grid-column: 1/-1; text-align: center; padding: 60px; color: #888; }
 
 /* Секция: Отзывы */
 .reviews-section {
@@ -294,189 +241,116 @@
 }
 
 .review-card {
-    background: #111;
-    border: 1px solid #2a2a2a;
-    border-radius: 10px;
-    padding: 30px;
-    transition: transform 0.3s, border-color 0.3s;
+    background: #111; border: 1px solid #2a2a2a; border-radius: 10px;
+    padding: 30px; transition: transform 0.3s, border-color 0.3s;
 }
 
-.review-card:hover {
-    transform: translateY(-5px);
-    border-color: #c9a962;
-}
+.review-card:hover { transform: translateY(-5px); border-color: #c9a962; }
 
-.review-rating {
-    margin-bottom: 15px;
-    font-size: 20px;
-}
+.review-rating { margin-bottom: 15px; font-size: 20px; }
 
 .review-text {
-    color: #e0e0e0;
-    font-size: 16px;
-    line-height: 1.8;
-    margin: 0 0 20px 0;
-    font-style: italic;
+    color: #e0e0e0; font-size: 16px; line-height: 1.8;
+    margin: 0 0 20px 0; font-style: italic;
 }
 
 .review-author {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding-top: 20px;
-    border-top: 1px solid #2a2a2a;
+    display: flex; align-items: center; gap: 15px;
+    padding-top: 20px; border-top: 1px solid #2a2a2a;
 }
 
 .review-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+    width: 50px; height: 50px; border-radius: 50%;
     background: linear-gradient(135deg, #c9a962, #8b7355);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #000;
-    font-weight: bold;
-    font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    color: #000; font-weight: bold; font-size: 20px;
 }
 
-.review-author-name {
-    color: #c9a962;
-    font-size: 16px;
-    margin: 0;
-    font-weight: 600;
-}
-
-.review-author-date {
-    color: #666;
-    font-size: 12px;
-    margin: 5px 0 0 0;
-}
-
-.review-empty {
-    grid-column: 1/-1;
-    text-align: center;
-    padding: 60px;
-    color: #888;
-}
+.review-author-name { color: #c9a962; font-size: 16px; margin: 0; font-weight: 600; }
+.review-author-date { color: #666; font-size: 12px; margin: 5px 0 0 0; }
+.review-empty { grid-column: 1/-1; text-align: center; padding: 60px; color: #888; }
 
 .review-form {
-    max-width: 600px;
-    margin: 0 auto;
-    background: #111;
-    border: 1px solid #2a2a2a;
-    border-radius: 10px;
-    padding: 40px;
+    max-width: 600px; margin: 0 auto; background: #111;
+    border: 1px solid #2a2a2a; border-radius: 10px; padding: 40px;
 }
 
 .review-form-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 32px;
-    color: #c9a962;
-    text-align: center;
-    margin: 0 0 30px 0;
+    font-family: 'Cormorant Garamond', serif; font-size: 32px;
+    color: #c9a962; text-align: center; margin: 0 0 30px 0;
 }
 
-.review-form-group {
-    margin-bottom: 20px;
-}
+.review-form-group { margin-bottom: 20px; }
 
-.review-form-label {
-    display: block;
-    color: #c9a962;
-    font-size: 14px;
-    margin-bottom: 10px;
-}
+.review-form-label { display: block; color: #c9a962; font-size: 14px; margin-bottom: 10px; }
 
 .review-form-input {
-    width: 100%;
-    padding: 15px;
-    background: #0a0a0a;
-    border: 1px solid #2a2a2a;
-    color: #fff;
-    border-radius: 5px;
-    font-size: 16px;
+    width: 100%; padding: 15px; background: #0a0a0a;
+    border: 1px solid #2a2a2a; color: #fff; border-radius: 5px; font-size: 16px;
 }
 
 .review-form-textarea {
-    width: 100%;
-    padding: 15px;
-    background: #0a0a0a;
-    border: 1px solid #2a2a2a;
-    color: #fff;
-    border-radius: 5px;
-    font-size: 16px;
-    resize: vertical;
+    width: 100%; padding: 15px; background: #0a0a0a;
+    border: 1px solid #2a2a2a; color: #fff; border-radius: 5px;
+    font-size: 16px; resize: vertical;
 }
 
-.review-rating-input {
-    display: flex;
-    gap: 10px;
-    font-size: 32px;
-}
-
-.review-rating-label {
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.review-rating-label:hover {
-    transform: scale(1.2);
-}
-
-.review-rating-input input {
-    display: none;
-}
+.review-rating-input { display: flex; gap: 10px; font-size: 32px; }
+.review-rating-label { cursor: pointer; transition: transform 0.2s; }
+.review-rating-label:hover { transform: scale(1.2); }
+.review-rating-input input { display: none; }
 
 .review-form-submit {
-    width: 100%;
-    padding: 15px;
+    width: 100%; padding: 15px;
     background: linear-gradient(135deg, #c9a962, #8b7355);
-    color: #000;
-    border: none;
-    border-radius: 5px;
-    font-size: 18px;
-    font-weight: 600;
-    cursor: pointer;
+    color: #000; border: none; border-radius: 5px;
+    font-size: 18px; font-weight: 600; cursor: pointer;
     transition: transform 0.3s;
 }
 
-.review-form-submit:hover {
-    transform: scale(1.02);
+.review-form-submit:hover { transform: scale(1.02); }
+.review-form-note { color: #666; font-size: 12px; text-align: center; margin: 15px 0 0 0; }
+
+/* Модальное окно "Спасибо за отзыв" */
+#reviewThanksModal {
+    display: none; position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%; background: rgba(0,0,0,0.9);
+    z-index: 2000; justify-content: center; align-items: center;
 }
 
-.review-form-note {
-    color: #666;
-    font-size: 12px;
-    text-align: center;
-    margin: 15px 0 0 0;
+#reviewThanksModal .modal-content {
+    background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+    border: 2px solid #c9a962; border-radius: 15px;
+    padding: 50px 40px; max-width: 500px; text-align: center;
+    animation: modalFadeIn 0.4s ease-out;
 }
+
+#reviewThanksModal .modal-icon { font-size: 64px; margin-bottom: 20px; }
+#reviewThanksModal .modal-title {
+    font-family: 'Cormorant Garamond', serif; font-size: 32px;
+    color: #c9a962; margin: 0 0 20px 0;
+}
+#reviewThanksModal .modal-text {
+    color: #e0e0e0; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;
+}
+#reviewThanksModal .modal-close {
+    padding: 15px 40px; background: linear-gradient(135deg, #c9a962, #8b7355);
+    color: #000; border: none; border-radius: 5px;
+    font-size: 16px; font-weight: 600; cursor: pointer;
+    transition: transform 0.2s;
+}
+#reviewThanksModal .modal-close:hover { transform: scale(1.05); }
 
 /* Адаптивность */
 @media (max-width: 768px) {
-    .hero-logo {
-        font-size: 80px;
-    }
-
-    .about h2 {
-        font-size: 36px;
-    }
-
-    .team-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .reviews-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .review-form {
-        padding: 30px 20px;
-    }
+    .hero-logo { font-size: 80px; }
+    .about h2 { font-size: 36px; }
+    .team-grid, .reviews-grid { grid-template-columns: 1fr; }
+    .review-form { padding: 30px 20px; }
 }
 </style>
 
-<!-- Подключаем дорогие шрифты -->
+<!-- Подключаем шрифты -->
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
 
 <!-- Герой секция -->
@@ -517,7 +391,6 @@
             и готовят блюда с душой
         </p>
     </div>
-
     <div class="team-grid">
         {% for member in team_members %}
         <div class="team-card">
@@ -526,14 +399,12 @@
             {% else %}
             <div class="team-photo-placeholder">👤</div>
             {% endif %}
-
             <div class="team-info">
                 <h3 class="team-name">{{ member.first_name }} {{ member.last_name }}</h3>
                 <p class="team-position">
                     {% if member.custom_position %}{{ member.custom_position }}{% else %}{{ member.get_position_display }}{% endif %}
                 </p>
                 <p class="team-description">{{ member.description|truncatewords:20 }}</p>
-
                 {% if member.instagram or member.telegram %}
                 <div class="team-social">
                     {% if member.instagram %}
@@ -560,7 +431,6 @@
     <div style="max-width: 1400px; margin: 0 auto;">
         <div style="text-align: center; margin-bottom: 60px;">
             <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 48px; color: #c9a962; margin: 0 0 20px 0;">Отзывы гостей</h2>
-
             {% if average_rating %}
             <div style="margin-bottom: 30px;">
                 <span style="font-size: 48px; color: #c9a962;">
@@ -571,7 +441,6 @@
                 </p>
             </div>
             {% endif %}
-
             <p style="color: #888; font-size: 18px; max-width: 600px; margin: 0 auto;">
                 Что говорят наши гости о посещении ресторана
             </p>
@@ -583,16 +452,11 @@
             <div class="review-card">
                 <div class="review-rating">
                     {% for i in "12345"|make_list %}
-                        {% if forloop.counter <= review.rating %}
-                            <span>⭐</span>
-                        {% else %}
-                            <span style="opacity: 0.3;">⭐</span>
-                        {% endif %}
+                        {% if forloop.counter <= review.rating %}<span>⭐</span>
+                        {% else %}<span style="opacity: 0.3;">⭐</span>{% endif %}
                     {% endfor %}
                 </div>
-
                 <p class="review-text">"{{ review.text|truncatewords:30 }}"</p>
-
                 <div class="review-author">
                     <div class="review-avatar">{{ review.guest_name|first|upper }}</div>
                     <div>
@@ -612,50 +476,54 @@
         <!-- Форма отправки отзыва -->
         <div class="review-form">
             <h3 class="review-form-title">Оставить отзыв</h3>
-
             <form method="POST" action="{% url 'submit_review' %}">
                 {% csrf_token %}
-
                 <div class="review-form-group">
                     <label class="review-form-label">Ваше имя *</label>
                     <input type="text" name="guest_name" class="review-form-input" required placeholder="Иван Иванов">
                 </div>
-
                 <div class="review-form-group">
                     <label class="review-form-label">Email *</label>
                     <input type="email" name="guest_email" class="review-form-input" required placeholder="email@example.com">
                 </div>
-
                 <div class="review-form-group">
                     <label class="review-form-label">Оценка *</label>
                     <div class="review-rating-input">
                         {% for i in "12345"|make_list %}
                         <label class="review-rating-label">
-                            <input type="radio" name="rating" value="{{ forloop.counter }}">
-                            ⭐
+                            <input type="radio" name="rating" value="{{ forloop.counter }}">⭐
                         </label>
                         {% endfor %}
                     </div>
                 </div>
-
                 <div class="review-form-group">
                     <label class="review-form-label">Ваш отзыв *</label>
                     <textarea name="text" class="review-form-textarea" rows="5" required placeholder="Расскажите о вашем посещении..."></textarea>
                 </div>
-
                 <button type="submit" class="review-form-submit">Отправить отзыв</button>
-
                 <p class="review-form-note">🔒 Отзыв появится на сайте после модерации</p>
             </form>
         </div>
     </div>
 </section>
 
+<!-- Модальное окно: Спасибо за отзыв -->
+<div id="reviewThanksModal">
+    <div class="modal-content">
+        <div class="modal-icon">✨</div>
+        <h3 class="modal-title">Спасибо за отзыв!</h3>
+        <p class="modal-text">
+            Ваш отзыв поможет нам стать лучше.<br>
+            Он появится на сайте после проверки модератором.
+        </p>
+        <button class="modal-close" onclick="closeReviewThanks()">Закрыть</button>
+    </div>
+</div>
+
 <script>
-// Анимация появления букв логотипа "РК"
+// Анимация логотипа
 const logoText = 'РК';
 const logoElement = document.getElementById('heroLogo');
-
 for (let i = 0; i < logoText.length; i++) {
     const span = document.createElement('span');
     span.className = 'letter';
@@ -664,10 +532,9 @@ for (let i = 0; i < logoText.length; i++) {
     logoElement.appendChild(span);
 }
 
-// Анимация появления букв заголовка "Русский Край"
+// Анимация заголовка "Русский Край"
 const aboutTitleText = 'Русский Край';
 const aboutTitleElement = document.getElementById('aboutTitle');
-
 for (let i = 0; i < aboutTitleText.length; i++) {
     const span = document.createElement('span');
     span.className = 'letter';
@@ -677,20 +544,13 @@ for (let i = 0; i < aboutTitleText.length; i++) {
 }
 
 // Анимация при скролле
-const observerOptions = {
-    threshold: 0.2,
-    rootMargin: '0px 0px -50px 0px'
-};
-
+const observerOptions = { threshold: 0.2, rootMargin: '0px 0px -50px 0px' };
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-        }
+        if (entry.isIntersecting) entry.target.classList.add('visible');
     });
 }, observerOptions);
 
-// Наблюдаем за элементами
 const aboutTitle = document.getElementById('aboutTitle');
 const ornament1 = document.getElementById('ornament1');
 const aboutText = document.getElementById('aboutText');
@@ -701,19 +561,31 @@ if (ornament1) observer.observe(ornament1);
 if (aboutText) observer.observe(aboutText);
 if (ornament2) observer.observe(ornament2);
 
-// Интерактивность для рейтинга в форме отзыва
+// Интерактивность рейтинга
 document.querySelectorAll('.review-rating-input input[type="radio"]').forEach(radio => {
     radio.addEventListener('change', function() {
         const value = parseInt(this.value);
         const labels = this.closest('.review-rating-input').querySelectorAll('.review-rating-label');
         labels.forEach((label, index) => {
-            if (index < value) {
-                label.style.opacity = '1';
-            } else {
-                label.style.opacity = '0.3';
-            }
+            label.style.opacity = index < value ? '1' : '0.3';
         });
     });
+});
+
+// Модальное окно благодарности
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.hash === '#review-thanks') {
+        document.getElementById('reviewThanksModal').style.display = 'flex';
+        history.replaceState(null, null, window.location.pathname);
+    }
+});
+
+function closeReviewThanks() {
+    document.getElementById('reviewThanksModal').style.display = 'none';
+}
+
+document.getElementById('reviewThanksModal').addEventListener('click', function(e) {
+    if (e.target === this) closeReviewThanks();
 });
 </script>
 {% endblock %}

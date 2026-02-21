@@ -400,6 +400,6 @@ def submit_review(request):
             request,
             'Спасибо за отзыв! Он появится на сайте после модерации.'
         )
-        return redirect('index')
+        return redirect('index#review-thanks') # якорь для модального окна
 
     return redirect('index')
