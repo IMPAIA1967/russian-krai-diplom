@@ -13,7 +13,7 @@ from django.views.generic import TemplateView, CreateView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password, make_password
-from .models import Category, MenuItem, Reservation, User
+from .models import Category, MenuItem, Reservation, User, Review
 from .serializers import (
     CategorySerializer,
     MenuItemSerializer,
@@ -125,8 +125,14 @@ class IndexView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['page_title'] = 'Главная'
         # Добавляем команду ресторана
-        from .models import TeamMember
+        from .models import TeamMember, Review
         context['team_members'] = TeamMember.objects.filter(is_active=True).order_by('order', 'last_name')[:8]
+        # Добавляем опубликованные отзывы
+        context['reviews'] = Review.objects.filter(is_published=True).select_related()[:6]
+        # Считаем средний рейтинг
+        from django.db.models import Avg
+        avg_rating = Review.objects.filter(is_published=True).aggregate(Avg('rating'))['rating__avg']
+        context['average_rating'] = round(avg_rating, 1) if avg_rating else 0
         return context
 
 
@@ -358,3 +364,42 @@ def auth_register_login(request):
     return render(request, 'restaurant/auth/login_register.html', {
         'page_title': 'Вход / Регистрация',
     })
+
+
+def submit_review(request):
+    """
+    Отправка отзыва гостем.
+    """
+    if request.method == 'POST':
+        guest_name = request.POST.get('guest_name', '').strip()
+        guest_email = request.POST.get('guest_email', '').strip()
+        rating = request.POST.get('rating', 5)
+        text = request.POST.get('text', '').strip()
+
+        if not guest_name or not guest_email or not text:
+            messages.error(request, 'Пожалуйста, заполните все обязательные поля.')
+            return redirect('index')
+
+        try:
+            rating = int(rating)
+            if rating < 1 or rating > 5:
+                raise ValueError()
+        except ValueError:
+            messages.error(request, 'Некорректный рейтинг.')
+            return redirect('index')
+
+        Review.objects.create(
+            guest_name=guest_name,
+            guest_email=guest_email,
+            rating=rating,
+            text=text,
+            is_published=False  # Требует модерации
+        )
+
+        messages.success(
+            request,
+            'Спасибо за отзыв! Он появится на сайте после модерации.'
+        )
+        return redirect('index')
+
+    return redirect('index')
