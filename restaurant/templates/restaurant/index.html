@@ -50,7 +50,6 @@
     font-size: 150px;
     font-weight: 700;
     letter-spacing: 20px;
-    /* Тёмное золото с серебром - видно на тёмном фоне */
     background: linear-gradient(135deg, #4a4a4a 0%, #8b7355 25%, #c9b896 50%, #8b7355 75%, #4a4a4a 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -75,7 +74,6 @@
     font-weight: 300;
     letter-spacing: 10px;
     text-transform: uppercase;
-    /* Более светлый оттенок */
     color: #d4d4d4;
     margin: 20px 0;
     opacity: 0;
@@ -87,7 +85,6 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 16px;
     line-height: 1.8;
-    /* Светлый текст - хорошая видимость */
     color: #e0e0e0;
     margin: 30px 0;
     opacity: 0;
@@ -99,7 +96,6 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 24px;
     font-weight: 600;
-    /* Тёплое золото */
     background: linear-gradient(135deg, #c9b896, #e8dcc8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -113,7 +109,6 @@
 .hero-hours {
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
-    /* Светло-серый для читаемости */
     color: #c0c0c0;
     margin-top: 30px;
     opacity: 0;
@@ -135,7 +130,6 @@
     font-family: 'Playfair Display', serif;
     font-size: 48px;
     font-weight: 700;
-    /* Тёмное золото с бронзой - благородно и видно */
     background: linear-gradient(135deg, #5a4a3a 0%, #9a7b4f 30%, #c9b896 50%, #9a7b4f 70%, #5a4a3a 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -181,7 +175,6 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 16px;
     line-height: 2;
-    /* Светло-серый для хорошей читаемости */
     color: #d0d0d0;
     max-width: 800px;
     margin: 0 auto;
@@ -286,6 +279,179 @@
     color: #888;
 }
 
+/* Секция: Отзывы */
+.reviews-section {
+    padding: 100px 20px;
+    background: linear-gradient(135deg, #111 0%, #0a0a0a 100%);
+    border-top: 1px solid #2a2a2a;
+}
+
+.reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+.review-card {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 30px;
+    transition: transform 0.3s, border-color 0.3s;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    border-color: #c9a962;
+}
+
+.review-rating {
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+.review-text {
+    color: #e0e0e0;
+    font-size: 16px;
+    line-height: 1.8;
+    margin: 0 0 20px 0;
+    font-style: italic;
+}
+
+.review-author {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-top: 20px;
+    border-top: 1px solid #2a2a2a;
+}
+
+.review-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c9a962, #8b7355);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.review-author-name {
+    color: #c9a962;
+    font-size: 16px;
+    margin: 0;
+    font-weight: 600;
+}
+
+.review-author-date {
+    color: #666;
+    font-size: 12px;
+    margin: 5px 0 0 0;
+}
+
+.review-empty {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 60px;
+    color: #888;
+}
+
+.review-form {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 40px;
+}
+
+.review-form-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    color: #c9a962;
+    text-align: center;
+    margin: 0 0 30px 0;
+}
+
+.review-form-group {
+    margin-bottom: 20px;
+}
+
+.review-form-label {
+    display: block;
+    color: #c9a962;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.review-form-input {
+    width: 100%;
+    padding: 15px;
+    background: #0a0a0a;
+    border: 1px solid #2a2a2a;
+    color: #fff;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.review-form-textarea {
+    width: 100%;
+    padding: 15px;
+    background: #0a0a0a;
+    border: 1px solid #2a2a2a;
+    color: #fff;
+    border-radius: 5px;
+    font-size: 16px;
+    resize: vertical;
+}
+
+.review-rating-input {
+    display: flex;
+    gap: 10px;
+    font-size: 32px;
+}
+
+.review-rating-label {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.review-rating-label:hover {
+    transform: scale(1.2);
+}
+
+.review-rating-input input {
+    display: none;
+}
+
+.review-form-submit {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #c9a962, #8b7355);
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.review-form-submit:hover {
+    transform: scale(1.02);
+}
+
+.review-form-note {
+    color: #666;
+    font-size: 12px;
+    text-align: center;
+    margin: 15px 0 0 0;
+}
+
 /* Адаптивность */
 @media (max-width: 768px) {
     .hero-logo {
@@ -299,6 +465,14 @@
     .team-grid {
         grid-template-columns: 1fr;
     }
+
+    .reviews-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .review-form {
+        padding: 30px 20px;
+    }
 }
 </style>
 
@@ -307,12 +481,8 @@
 
 <!-- Герой секция -->
 <section class="hero">
-    <!-- Michelin Star -->
     <div class="michelin-star">⭐</div>
-
-    <!-- Логотип с анимацией букв -->
     <h1 class="hero-logo" id="heroLogo"></h1>
-
     <p class="hero-subtitle">ЕДА И ДЕСЕРТЫ</p>
     <p class="hero-description">
         Традиционная русская кухня в современном исполнении.<br>
@@ -341,12 +511,7 @@
 <!-- Секция: Наша команда -->
 <section class="team-section">
     <div style="text-align: center; margin-bottom: 60px;">
-        <h2 style="
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 48px;
-            color: #c9a962;
-            margin: 0 0 20px 0;
-        ">Наша команда</h2>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 48px; color: #c9a962; margin: 0 0 20px 0;">Наша команда</h2>
         <p style="color: #888; font-size: 18px; max-width: 600px; margin: 0 auto;">
             Профессионалы своего дела, которые создают для вас незабываемую атмосферу
             и готовят блюда с душой
@@ -364,15 +529,9 @@
 
             <div class="team-info">
                 <h3 class="team-name">{{ member.first_name }} {{ member.last_name }}</h3>
-
                 <p class="team-position">
-                    {% if member.custom_position %}
-                        {{ member.custom_position }}
-                    {% else %}
-                        {{ member.get_position_display }}
-                    {% endif %}
+                    {% if member.custom_position %}{{ member.custom_position }}{% else %}{{ member.get_position_display }}{% endif %}
                 </p>
-
                 <p class="team-description">{{ member.description|truncatewords:20 }}</p>
 
                 {% if member.instagram or member.telegram %}
@@ -393,6 +552,102 @@
             <p>Раздел команды скоро появится</p>
         </div>
         {% endfor %}
+    </div>
+</section>
+
+<!-- Секция: Отзывы гостей -->
+<section class="reviews-section">
+    <div style="max-width: 1400px; margin: 0 auto;">
+        <div style="text-align: center; margin-bottom: 60px;">
+            <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 48px; color: #c9a962; margin: 0 0 20px 0;">Отзывы гостей</h2>
+
+            {% if average_rating %}
+            <div style="margin-bottom: 30px;">
+                <span style="font-size: 48px; color: #c9a962;">
+                    {% for i in "12345"|make_list %}{% if forloop.counter <= average_rating %}⭐{% endif %}{% endfor %}
+                </span>
+                <p style="color: #888; font-size: 24px; margin: 10px 0 0 0;">
+                    {{ average_rating }} из 5 на основе {{ reviews|length }}+ отзывов
+                </p>
+            </div>
+            {% endif %}
+
+            <p style="color: #888; font-size: 18px; max-width: 600px; margin: 0 auto;">
+                Что говорят наши гости о посещении ресторана
+            </p>
+        </div>
+
+        <!-- Сетка отзывов -->
+        <div class="reviews-grid">
+            {% for review in reviews %}
+            <div class="review-card">
+                <div class="review-rating">
+                    {% for i in "12345"|make_list %}
+                        {% if forloop.counter <= review.rating %}
+                            <span>⭐</span>
+                        {% else %}
+                            <span style="opacity: 0.3;">⭐</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <p class="review-text">"{{ review.text|truncatewords:30 }}"</p>
+
+                <div class="review-author">
+                    <div class="review-avatar">{{ review.guest_name|first|upper }}</div>
+                    <div>
+                        <p class="review-author-name">{{ review.guest_name }}</p>
+                        <p class="review-author-date">{{ review.created_at|date:"d.m.Y" }}</p>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="review-empty">
+                <p style="font-size: 48px; margin: 0 0 20px 0;">💬</p>
+                <p>Отзывы скоро появятся</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Форма отправки отзыва -->
+        <div class="review-form">
+            <h3 class="review-form-title">Оставить отзыв</h3>
+
+            <form method="POST" action="{% url 'submit_review' %}">
+                {% csrf_token %}
+
+                <div class="review-form-group">
+                    <label class="review-form-label">Ваше имя *</label>
+                    <input type="text" name="guest_name" class="review-form-input" required placeholder="Иван Иванов">
+                </div>
+
+                <div class="review-form-group">
+                    <label class="review-form-label">Email *</label>
+                    <input type="email" name="guest_email" class="review-form-input" required placeholder="email@example.com">
+                </div>
+
+                <div class="review-form-group">
+                    <label class="review-form-label">Оценка *</label>
+                    <div class="review-rating-input">
+                        {% for i in "12345"|make_list %}
+                        <label class="review-rating-label">
+                            <input type="radio" name="rating" value="{{ forloop.counter }}">
+                            ⭐
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="review-form-group">
+                    <label class="review-form-label">Ваш отзыв *</label>
+                    <textarea name="text" class="review-form-textarea" rows="5" required placeholder="Расскажите о вашем посещении..."></textarea>
+                </div>
+
+                <button type="submit" class="review-form-submit">Отправить отзыв</button>
+
+                <p class="review-form-note">🔒 Отзыв появится на сайте после модерации</p>
+            </form>
+        </div>
     </div>
 </section>
 
@@ -445,5 +700,20 @@ if (aboutTitle) observer.observe(aboutTitle);
 if (ornament1) observer.observe(ornament1);
 if (aboutText) observer.observe(aboutText);
 if (ornament2) observer.observe(ornament2);
+
+// Интерактивность для рейтинга в форме отзыва
+document.querySelectorAll('.review-rating-input input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const value = parseInt(this.value);
+        const labels = this.closest('.review-rating-input').querySelectorAll('.review-rating-label');
+        labels.forEach((label, index) => {
+            if (index < value) {
+                label.style.opacity = '1';
+            } else {
+                label.style.opacity = '0.3';
+            }
+        });
+    });
+});
 </script>
 {% endblock %}
