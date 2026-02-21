@@ -97,12 +97,28 @@ class Reservation(models.Model):
             print(f"Generated token: {self.confirmation_token}")  # Для отладки
         super().save(*args, **kwargs)
 
+
 class User(models.Model):
     """Пользователь системы"""
+    ROLE_CHOICES = [
+        ('admin', 'Администратор'),
+        ('staff', 'Сотрудник'),
+        ('guest', 'Гость'),
+    ]
+
     email = models.CharField(max_length=200, unique=True, verbose_name="Email")
     password = models.CharField(max_length=128, verbose_name="Пароль")
     first_name = models.CharField(max_length=100, null=True, blank=True, verbose_name="Имя")
     last_name = models.CharField(max_length=100, null=True, blank=True, verbose_name="Фамилия")
+
+    # Поле для роли пользователя
+    role = models.CharField(
+        max_length=20,
+        choices=ROLE_CHOICES,
+        default='guest',
+        verbose_name="Роль"
+    )
+
     is_admin = models.BooleanField(default=False, verbose_name="Администратор")
     is_active = models.BooleanField(default=True, verbose_name="Активен")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
@@ -115,3 +131,8 @@ class User(models.Model):
 
     def __str__(self):
         return self.email
+
+    @property
+    def is_staff_user(self):
+        """Проверка: является ли пользователем ресторана (админ или сотрудник)"""
+        return self.role in ['admin', 'staff'] or self.is_admin

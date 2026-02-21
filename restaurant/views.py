@@ -216,7 +216,6 @@ class ApiDocsView(TemplateView):
     """Страница документации API"""
     template_name = 'restaurant/api.html'
 
-
 class CancelReservationView(View):
     """Контроллер для отмены бронирования."""
 

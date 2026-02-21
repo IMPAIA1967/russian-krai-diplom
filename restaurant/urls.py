@@ -52,12 +52,10 @@ web_urlpatterns = [
     path('menu/', MenuView.as_view(), name='menu'),
     path('reservation/', ReservationView.as_view(), name='reservation'),
     path('reservation/<int:pk>/cancel/', CancelReservationView.as_view(), name='cancel_reservation'),
-    path('reservation/confirm/<str:token>/', ConfirmReservationView.as_view(), name='confirm_reservation'),  # ← ДОБАВИТЬ
+    path('reservation/confirm/<str:token>/', ConfirmReservationView.as_view(), name='confirm_reservation'),
     path('profile/', profile_view, name='profile'),
     path('api/booked-times/', get_booked_times, name='get_booked_times'),
 ]
-
-
 
 api_urlpatterns = [
     path('', api_root, name='api-root'),
@@ -65,7 +63,6 @@ api_urlpatterns = [
     path('auth/login/', LoginView.as_view(), name='login'),
     path('profile/', profile_view, name='profile'),
 ]
-
 
 urlpatterns = web_urlpatterns + [
     path('api/', include(router.urls)),
