@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.db.models import Count, Sum
 from django.utils import timezone
 from datetime import timedelta
-from .models import Reservation, TeamMember
+from .models import Reservation, TeamMember, Review
 from .decorators import admin_required
 from .utils import send_reservation_email, send_cancellation_email
 
@@ -268,3 +268,76 @@ def admin_delete_team_member(request, pk):
 
     messages.success(request, f'Член команды удалён!')
     return redirect('admin_team')
+
+
+def admin_reviews(request):
+    """
+    Страница управления отзывами (модерация).
+    """
+    if not (request.user.is_authenticated and request.user.is_staff_user):
+        messages.error(request, 'Доступ запрещён. Только для сотрудников.')
+        return redirect('index')
+
+    status_filter = request.GET.get('status', 'all')
+
+    if status_filter == 'published':
+        reviews = Review.objects.filter(is_published=True)
+    elif status_filter == 'pending':
+        reviews = Review.objects.filter(is_published=False)
+    else:
+        reviews = Review.objects.all()
+
+    reviews = reviews.order_by('-created_at')
+
+    return render(request, 'restaurant/admin/reviews.html', {
+        'reviews': reviews,
+        'status_filter': status_filter,
+        'page_title': 'Модерация отзывов',
+    })
+
+
+def admin_publish_review(request, pk):
+    """
+    Опубликовать отзыв.
+    """
+    if not (request.user.is_authenticated and request.user.is_staff_user):
+        messages.error(request, 'Доступ запрещён.')
+        return redirect('index')
+
+    review = get_object_or_404(Review, pk=pk)
+    review.is_published = True
+    review.save()
+
+    messages.success(request, f'Отзыв от {review.guest_name} опубликован!')
+    return redirect('admin_reviews')
+
+
+def admin_unpublish_review(request, pk):
+    """
+    Снять с публикации отзыв.
+    """
+    if not (request.user.is_authenticated and request.user.is_staff_user):
+        messages.error(request, 'Доступ запрещён.')
+        return redirect('index')
+
+    review = get_object_or_404(Review, pk=pk)
+    review.is_published = False
+    review.save()
+
+    messages.success(request, f'Отзыв от {review.guest_name} снят с публикации.')
+    return redirect('admin_reviews')
+
+
+def admin_delete_review(request, pk):
+    """
+    Удалить отзыв.
+    """
+    if not (request.user.is_authenticated and request.user.is_staff_user):
+        messages.error(request, 'Доступ запрещён.')
+        return redirect('index')
+
+    review = get_object_or_404(Review, pk=pk)
+    review.delete()
+
+    messages.success(request, 'Отзыв удалён!')
+    return redirect('admin_reviews')

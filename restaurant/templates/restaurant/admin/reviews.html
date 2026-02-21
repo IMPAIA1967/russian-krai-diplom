@@ -1,0 +1,197 @@
+{% extends 'restaurant/base.html' %}
+
+{% block title %}Модерация отзывов - Админ-панель{% endblock %}
+
+{% block content %}
+<style>
+    .admin-container { max-width: 1400px; margin: 50px auto; padding: 0 20px; }
+    .admin-header {
+        background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+        border: 1px solid #c9a962;
+        padding: 30px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    .admin-header h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 42px;
+        color: #c9a962;
+        margin: 0;
+    }
+    .filters {
+        background: #111;
+        border: 1px solid #2a2a2a;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .filters a {
+        padding: 10px 20px;
+        background: #2a2a2a;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 14px;
+        transition: background 0.3s;
+    }
+    .filters a:hover, .filters a.active {
+        background: #c9a962;
+        color: #000;
+    }
+    .review-card {
+        background: #111;
+        border: 1px solid #2a2a2a;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 20px;
+    }
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 15px;
+    }
+    .review-author {
+        font-weight: 600;
+        color: #c9a962;
+        font-size: 18px;
+    }
+    .review-date {
+        color: #666;
+        font-size: 14px;
+    }
+    .review-rating {
+        font-size: 24px;
+        margin: 10px 0;
+    }
+    .review-text {
+        color: #e0e0e0;
+        font-size: 16px;
+        line-height: 1.6;
+        margin: 15px 0;
+        font-style: italic;
+    }
+    .review-email {
+        color: #888;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+    .review-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #2a2a2a;
+    }
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .btn-publish { background: #49cc90; color: #000; }
+    .btn-unpublish { background: #f39c12; color: #000; }
+    .btn-delete { background: #e74c3c; color: #fff; }
+    .btn-back { background: #2a2a2a; color: #fff; }
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 3px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .status-published { background: #49cc90; color: #000; }
+    .status-pending { background: #f39c12; color: #000; }
+    .messages {
+        margin-bottom: 20px;
+    }
+    .message {
+        padding: 15px 20px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+    .message-success {
+        background: rgba(73, 204, 144, 0.2);
+        border: 1px solid #49cc90;
+        color: #49cc90;
+    }
+    .message-error {
+        background: rgba(231, 76, 60, 0.2);
+        border: 1px solid #e74c3c;
+        color: #e74c3c;
+    }
+</style>
+
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>💬 Модерация отзывов</h1>
+        <p style="color: #888; margin: 10px 0 0 0;">Управление отзывами гостей</p>
+    </div>
+
+    <!-- Сообщения -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message {% if message.tags == 'success' %}message-success{% else %}message-error{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Фильтры -->
+    <div class="filters">
+        <a href="{% url 'admin_reviews' %}?status=all" class="{% if status_filter == 'all' %}active{% endif %}">Все</a>
+        <a href="{% url 'admin_reviews' %}?status=pending" class="{% if status_filter == 'pending' %}active{% endif %}">🟡 Ожидают</a>
+        <a href="{% url 'admin_reviews' %}?status=published" class="{% if status_filter == 'published' %}active{% endif %}">🟢 Опубликованы</a>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-back" style="margin-left: auto;">← Назад</a>
+    </div>
+
+    <!-- Список отзывов -->
+    {% for review in reviews %}
+    <div class="review-card">
+        <div class="review-header">
+            <div>
+                <span class="review-author">{{ review.guest_name }}</span>
+                <span class="review-date">• {{ review.created_at|date:"d.m.Y H:i" }}</span>
+            </div>
+            <span class="status-badge {% if review.is_published %}status-published{% else %}status-pending{% endif %}">
+                {% if review.is_published %}✓ Опубликован{% else %}⏳ На модерации{% endif %}
+            </span>
+        </div>
+
+        <div class="review-rating">
+            {% for i in "12345"|make_list %}
+                {% if forloop.counter <= review.rating %}⭐{% else %}<span style="opacity: 0.3;">⭐</span>{% endif %}
+            {% endfor %}
+        </div>
+
+        <p class="review-email">📧 {{ review.guest_email }}</p>
+
+        <p class="review-text">"{{ review.text }}"</p>
+
+        <div class="review-actions">
+            {% if review.is_published %}
+            <a href="{% url 'admin_unpublish_review' review.pk %}" class="btn btn-unpublish">🟡 Снять с публикации</a>
+            {% else %}
+            <a href="{% url 'admin_publish_review' review.pk %}" class="btn btn-publish">🟢 Опубликовать</a>
+            {% endif %}
+            <a href="{% url 'admin_delete_review' review.pk %}" class="btn btn-delete" onclick="return confirm('Удалить этот отзыв?')">🗑️ Удалить</a>
+        </div>
+    </div>
+    {% empty %}
+    <div style="text-align: center; padding: 60px; color: #888;">
+        <p style="font-size: 48px; margin: 0 0 20px 0;">💬</p>
+        <p>Нет отзывов для отображения</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
