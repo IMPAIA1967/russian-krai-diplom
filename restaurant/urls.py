@@ -19,7 +19,7 @@ from .views import (
     MenuView,
     ReservationView,
     ApiDocsView,
-    CancelReservationView, profile_view, get_booked_times, ConfirmReservationView,
+    CancelReservationView, profile_view, get_booked_times, ConfirmReservationView, logout_view, auth_register_login,
 )
 from .views_admin import admin_dashboard, admin_reservations, admin_statistics, admin_cancel_reservation, \
     admin_confirm_reservation
@@ -62,6 +62,9 @@ web_urlpatterns = [
     path('admin-panel/reservations/<int:pk>/confirm/', admin_confirm_reservation, name='admin_confirm_reservation'),
     path('admin-panel/reservations/<int:pk>/cancel/', admin_cancel_reservation, name='admin_cancel_reservation'),
     path('admin-panel/statistics/', admin_statistics, name='admin_statistics'),
+    path('profile/', profile_view, name='profile'),
+    path('auth/register-login/', auth_register_login, name='auth_register_login'),
+    path('auth/logout/', logout_view, name='logout'),
 ]
 
 api_urlpatterns = [
