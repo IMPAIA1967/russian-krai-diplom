@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend
 from django.views.generic import TemplateView, CreateView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password, make_password
 from .models import Category, MenuItem, Reservation, User, Review
@@ -400,6 +400,6 @@ def submit_review(request):
             request,
             'Спасибо за отзыв! Он появится на сайте после модерации.'
         )
-        return redirect('index#review-thanks') # якорь для модального окна
+        return redirect(f"{reverse('index')}#review-thanks") # якорь для модального окна
 
     return redirect('index')
