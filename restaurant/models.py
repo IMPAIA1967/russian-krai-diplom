@@ -220,3 +220,40 @@ class TeamMember(models.Model):
         return f"{self.first_name} {self.last_name} - {position}"
 
 
+class Review(models.Model):
+    """Отзывы гостей ресторана"""
+    RATING_CHOICES = [
+        (1, '⭐ - Ужасно'),
+        (2, '⭐⭐ - Плохо'),
+        (3, '⭐⭐⭐ - Нормально'),
+        (4, '⭐⭐⭐⭐ - Хорошо'),
+        (5, '⭐⭐⭐⭐⭐ - Отлично'),
+    ]
+
+    guest_name = models.CharField(max_length=100, verbose_name="Имя гостя")
+    guest_email = models.CharField(max_length=200, verbose_name="Email")
+    rating = models.IntegerField(
+        choices=RATING_CHOICES,
+        default=5,
+        verbose_name="Рейтинг"
+    )
+    text = models.TextField(verbose_name="Текст отзыва")
+
+    is_published = models.BooleanField(default=False, verbose_name="Опубликован")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+
+    class Meta:
+        verbose_name = "Отзыв"
+        verbose_name_plural = "Отзывы"
+        db_table = "reviews"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.guest_name} - {self.rating} ⭐"
+
+    def get_rating_stars(self):
+        """Возвращает строку со звёздами"""
+        return '⭐' * self.rating
+
+
