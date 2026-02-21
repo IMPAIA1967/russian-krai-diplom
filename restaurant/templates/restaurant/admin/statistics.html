@@ -1,0 +1,203 @@
+{% extends 'restaurant/base.html' %}
+
+{% block title %}Статистика - Админ-панель{% endblock %}
+
+{% block content %}
+<style>
+    .admin-container { max-width: 1200px; margin: 50px auto; padding: 0 20px; }
+    .admin-header {
+        background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+        border: 1px solid #c9a962;
+        padding: 30px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    .admin-header h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 42px;
+        color: #c9a962;
+        margin: 0;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+    .stat-card {
+        background: #111;
+        border: 1px solid #2a2a2a;
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+    }
+    .stat-card h3 { color: #888; font-size: 14px; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; }
+    .stat-card .number {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 56px;
+        color: #c9a962;
+    }
+    .chart-section {
+        background: #111;
+        border: 1px solid #2a2a2a;
+        padding: 30px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+    .chart-section h2 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 28px;
+        color: #c9a962;
+        margin: 0 0 20px 0;
+    }
+    .status-list {
+        list-style: none;
+        padding: 0;
+    }
+    .status-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background: #0a0a0a;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+    .status-item:hover { border: 1px solid #c9a962; }
+    .status-bar {
+        height: 10px;
+        background: #2a2a2a;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+    .status-fill {
+        height: 100%;
+        border-radius: 5px;
+    }
+    .fill-pending { background: #f39c12; }
+    .fill-confirmed { background: #49cc90; }
+    .fill-cancelled { background: #e74c3c; }
+    .daily-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .daily-table th {
+        background: #1a1a1a;
+        color: #c9a962;
+        padding: 15px;
+        text-align: left;
+        font-size: 14px;
+    }
+    .daily-table td {
+        padding: 15px;
+        border-bottom: 1px solid #2a2a2a;
+        color: #e0e0e0;
+    }
+    .btn-back {
+        padding: 15px 40px;
+        background: #2a2a2a;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+    }
+</style>
+
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>📈 Статистика</h1>
+        <p style="color: #888; margin: 10px 0 0 0;">Аналитика бронирований за последние 30 дней</p>
+    </div>
+
+    <!-- Общая статистика -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Всего бронирований</h3>
+            <div class="number">{{ total_reservations }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Всего гостей</h3>
+            <div class="number">{{ total_guests }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Средний чек</h3>
+            <div class="number" style="font-size: 36px;">—</div>
+        </div>
+        <div class="stat-card">
+            <h3>Дней в статистике</h3>
+            <div class="number" style="font-size: 36px;">30</div>
+        </div>
+    </div>
+
+    <!-- Статистика по статусам -->
+    <div class="chart-section">
+        <h2>📊 Бронирования по статусам</h2>
+        <ul class="status-list">
+            {% for stat in status_stats %}
+            <li class="status-item">
+                <div style="flex: 1;">
+                    <strong style="color: #fff;">
+                        {% if stat.status == 'pending' %}Ожидает подтверждения
+                        {% elif stat.status == 'confirmed' %}Подтверждено
+                        {% elif stat.status == 'cancelled' %}Отменено
+                        {% elif stat.status == 'completed' %}Завершено
+                        {% else %}{{ stat.status }}{% endif %}
+                    </strong>
+                    <span style="color: #888; margin-left: 15px;">{{ stat.count }} броней</span>
+                    <div class="status-bar">
+                        <div class="status-fill fill-{{ stat.status }}"
+                             style="width: {% widthratio stat.count total_reservations 100 %}%"></div>
+                    </div>
+                </div>
+            </li>
+            {% empty %}
+            <li style="color: #888; text-align: center; padding: 20px;">Нет данных</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Статистика по дням -->
+    <div class="chart-section">
+        <h2>📅 Бронирования по дням (последние 30 дней)</h2>
+        <table class="daily-table">
+            <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Количество броней</th>
+                    <th>Количество гостей</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for day in daily_stats %}
+                <tr>
+                    <td>{{ day.reservation_date|date:"d.m.Y" }}</td>
+                    <td>📋 {{ day.count }}</td>
+                    <td>👥 {{ day.guests }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" style="text-align: center; color: #888; padding: 40px;">
+                        Нет данных за последние 30 дней
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Навигация -->
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="{% url 'admin_dashboard' %}" class="btn-back">
+            ← На дашборд
+        </a>
+        <a href="{% url 'admin_reservations' %}" class="btn-back" style="margin-left: 10px; background: #c9a962; color: #000;">
+            📋 Все бронирования
+        </a>
+    </div>
+</div>
+{% endblock %}
