@@ -22,7 +22,7 @@ from .views import (
     CancelReservationView, profile_view, get_booked_times, ConfirmReservationView, logout_view, auth_register_login,
 )
 from .views_admin import admin_dashboard, admin_reservations, admin_statistics, admin_cancel_reservation, \
-    admin_confirm_reservation
+    admin_confirm_reservation, admin_team, admin_edit_team_member, admin_add_team_member, admin_delete_team_member
 
 
 @api_view(['GET'])
@@ -48,23 +48,32 @@ router.register(r'menu-items', MenuItemViewSet, basename='menu-item')
 router.register(r'reservations', ReservationViewSet, basename='reservation')
 router.register(r'users', UserViewSet, basename='user')
 
-
 web_urlpatterns = [
     path('', IndexView.as_view(), name='index'),
     path('menu/', MenuView.as_view(), name='menu'),
     path('reservation/', ReservationView.as_view(), name='reservation'),
     path('reservation/<int:pk>/cancel/', CancelReservationView.as_view(), name='cancel_reservation'),
     path('reservation/confirm/<str:token>/', ConfirmReservationView.as_view(), name='confirm_reservation'),
+
+    # Маршруты для авторизации
     path('profile/', profile_view, name='profile'),
-    path('api/booked-times/', get_booked_times, name='get_booked_times'),
+    path('auth/register-login/', auth_register_login, name='auth_register_login'),
+    path('auth/logout/', logout_view, name='logout'),
+
+    # Маршруты для админ-панели
     path('admin-panel/', admin_dashboard, name='admin_dashboard'),
     path('admin-panel/reservations/', admin_reservations, name='admin_reservations'),
     path('admin-panel/reservations/<int:pk>/confirm/', admin_confirm_reservation, name='admin_confirm_reservation'),
     path('admin-panel/reservations/<int:pk>/cancel/', admin_cancel_reservation, name='admin_cancel_reservation'),
     path('admin-panel/statistics/', admin_statistics, name='admin_statistics'),
-    path('profile/', profile_view, name='profile'),
-    path('auth/register-login/', auth_register_login, name='auth_register_login'),
-    path('auth/logout/', logout_view, name='logout'),
+
+    # Маршруты для управления командой
+    path('admin-panel/team/', admin_team, name='admin_team'),
+    path('admin-panel/team/add/', admin_add_team_member, name='admin_add_team_member'),
+    path('admin-panel/team/<int:pk>/edit/', admin_edit_team_member, name='admin_edit_team_member'),
+    path('admin-panel/team/<int:pk>/delete/', admin_delete_team_member, name='admin_delete_team_member'),
+
+    path('api/booked-times/', get_booked_times, name='get_booked_times'),
 ]
 
 api_urlpatterns = [
