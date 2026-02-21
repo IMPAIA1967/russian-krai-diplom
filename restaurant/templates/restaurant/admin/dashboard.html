@@ -162,16 +162,18 @@
     </div>
 
     <!-- Навигация -->
-    <div style="text-align: center; margin-top: 30px;">
-        <a href="{% url 'admin_reservations' %}" class="btn btn-view" style="padding: 15px 40px; font-size: 14px;">
-            📋 Все бронирования
-        </a>
-        <a href="{% url 'admin_statistics' %}" class="btn btn-view" style="padding: 15px 40px; font-size: 14px; margin-left: 10px;">
-            📈 Статистика
-        </a>
-        <a href="{% url 'index' %}" class="btn" style="padding: 15px 40px; font-size: 14px; margin-left: 10px; background: #2a2a2a; color: #fff;">
-            🏠 На сайт
-        </a>
-    </div>
+   <div style="text-align: center; margin-top: 30px;">
+    <a href="{% url 'admin_reservations' %}" class="btn" style="padding: 15px 40px; background: #c9a962; color: #000;">
+        📋 Все бронирования
+    </a>
+    <a href="{% url 'admin_statistics' %}" class="btn" style="padding: 15px 40px; background: #c9a962; color: #000; margin-left: 10px;">
+        📈 Статистика
+    </a>
+    <a href="{% url 'admin_team' %}" class="btn" style="padding: 15px 40px; background: #c9a962; color: #000; margin-left: 10px;">
+        👥 Команда
+    </a>
+    <a href="{% url 'index' %}" class="btn btn-back" style="padding: 15px 40px; margin-left: 10px;">
+        🏠 На сайт
+    </a>
 </div>
 {% endblock %}
