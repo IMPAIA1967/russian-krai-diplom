@@ -1,4 +1,5 @@
 {% extends 'restaurant/base.html' %}
+{% load json_filters %}
 
 {% block title %}Команда ресторана - Админ-панель{% endblock %}
 
@@ -456,8 +457,5 @@
 </script>
 
 <!-- Фильтр для JSON -->
-{% load json_script %}
-{% for member in team_members %}
-{{ member|json_script:"member-"|add:member.pk }}
-{% endfor %}
+{% load json_filters %}
 {% endblock %}
