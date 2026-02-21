@@ -8,7 +8,7 @@ register = template.Library()
 @register.filter(name='safe_json')
 def safe_json(value):
     """
-    Преобразует объект Django в JSON для использования в JavaScript.
+    Преобразует объект Django в JSON для использования в JavaScript
     """
     data = {
         'pk': value.pk,

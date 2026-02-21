@@ -34,7 +34,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 
 class MenuItemViewSet(viewsets.ModelViewSet):
-    """API контроллер для позиций меню."""
+    """API контроллер для позиций меню"""
     queryset = MenuItem.objects.all().order_by('category__order', 'name')
     serializer_class = MenuItemSerializer
     permission_classes = [AllowAny]
@@ -45,7 +45,7 @@ class MenuItemViewSet(viewsets.ModelViewSet):
 
 
 class ReservationViewSet(viewsets.ModelViewSet):
-    """API контроллер для бронирований."""
+    """API контроллер для бронирований"""
     queryset = Reservation.objects.all().order_by('-created_at')
     serializer_class = ReservationSerializer
     permission_classes = [AllowAny]
@@ -60,7 +60,7 @@ class ReservationViewSet(viewsets.ModelViewSet):
 
 
 class RegisterView(APIView):
-    """Контроллер для регистрации нового пользователя."""
+    """Контроллер для регистрации нового пользователя"""
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -72,7 +72,7 @@ class RegisterView(APIView):
 
 
 class LoginView(APIView):
-    """Контроллер для входа пользователя и получения JWT токена."""
+    """Контроллер для входа пользователя и получения JWT токена"""
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -95,7 +95,7 @@ class LoginView(APIView):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    """API контроллер для управления пользователями."""
+    """API контроллер для управления пользователями"""
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
@@ -103,7 +103,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 @api_view(['GET'])
 def api_root(request):
-    """Корневой endpoint API."""
+    """Корневой endpoint API"""
     return Response({
         'categories': '/api/categories/',
         'menu': '/api/menu/',
@@ -114,7 +114,7 @@ def api_root(request):
 
 
 class IndexView(TemplateView):
-    """Контроллер для главной страницы."""
+    """Контроллер для главной страницы"""
     template_name = 'restaurant/index.html'
 
     def get_context_data(self, **kwargs):
@@ -133,7 +133,7 @@ class IndexView(TemplateView):
 
 
 class MenuView(TemplateView):
-    """Контроллер для страницы меню."""
+    """Контроллер для страницы меню"""
     template_name = 'restaurant/menu.html'
 
     def get_context_data(self, **kwargs):
@@ -145,7 +145,7 @@ class MenuView(TemplateView):
 
 
 class ReservationView(CreateView):
-    """Контроллер для страницы бронирования."""
+    """Контроллер для страницы бронирования"""
     template_name = 'restaurant/reservation.html'
     model = Reservation
     fields = ['guest_name', 'guest_phone', 'guest_email',
@@ -221,7 +221,7 @@ class ApiDocsView(TemplateView):
 
 
 class CancelReservationView(View):
-    """Контроллер для отмены бронирования."""
+    """Контроллер для отмены бронирования"""
 
     def post(self, request, pk):
         reservation = get_object_or_404(Reservation, pk=pk)
@@ -254,7 +254,7 @@ class CancelReservationView(View):
 
 
 class ConfirmReservationView(View):
-    """Контроллер для подтверждения бронирования по токену."""
+    """Контроллер для подтверждения бронирования по токену"""
 
     def get(self, request, token):
         try:
@@ -282,8 +282,8 @@ class ConfirmReservationView(View):
 def profile_view(request):
     """
     Личный кабинет пользователя.
-    Если не авторизован — показывает страницу входа/регистрации.
-    Если авторизован — показывает профиль с бронированиями.
+    Если не авторизован — показывает страницу входа/регистрации
+    Если авторизован — показывает профиль с бронированиями
     """
     if request.user.is_authenticated:
         user_reservations = Reservation.objects.filter(
@@ -312,7 +312,7 @@ def logout_view(request):
 
 def auth_register_login(request):
     """
-    Единая страница регистрации и входа по телефону.
+    Единая страница регистрации и входа по телефону
     """
     if request.user.is_authenticated:
         return redirect('profile')
@@ -364,7 +364,7 @@ def auth_register_login(request):
 
 def submit_review(request):
     """
-    Отправка отзыва гостем.
+    Отправка отзыва гостем
     """
     if request.method == 'POST':
         guest_name = request.POST.get('guest_name', '').strip()
@@ -396,6 +396,6 @@ def submit_review(request):
             request,
             'Спасибо за отзыв! Он появится на сайте после модерации.'
         )
-        return redirect(f"{reverse('index')}#review-thanks") # якорь для модального окна
+        return redirect(f"{reverse('index')}#review-thanks")  # якорь для модального окна
 
     return redirect('index')

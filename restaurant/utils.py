@@ -10,12 +10,12 @@ def send_reservation_email(reservation):
     # Генерируем ссылку для подтверждения
     confirm_url = f'{settings.SITE_URL}/reservation/confirm/{reservation.confirmation_token}/'
 
-    print(f"=== send_reservation_email ===")
+    print("=== send_reservation_email ===")
     print(f"Guest: {reservation.guest_name}")
     print(f"Token: {reservation.confirmation_token}")
     print(f"Confirm URL: {confirm_url}")
 
-    # ✅ Рендерим HTML шаблон ПОДТВЕРЖДЕНИЯ (исправлено!)
+    # Рендерим HTML шаблон подтверждения
     html_message = render_to_string('restaurant/emails/reservation_confirmation.html', {
         'reservation': reservation,
         'confirm_url': confirm_url,
@@ -57,13 +57,13 @@ def send_reservation_email(reservation):
 
 
 def send_cancellation_email(reservation):
-    """Отправляет email УВЕДОМЛЕНИЕ об отмене бронирования"""
+    """Отправляет email уведомления об отмене бронирования"""
     subject = f'Бронирование отменено - {reservation.reservation_date}'
 
-    print(f"=== send_cancellation_email ===")
+    print("=== send_cancellation_email ===")
     print(f"Guest: {reservation.guest_name}")
 
-    # ✅ Рендерим HTML шаблон ОТМЕНЫ (исправлено!)
+    # Рендерим HTML шаблон ОТМЕНЫ
     html_message = render_to_string('restaurant/emails/reservation_cancellation.html', {
         'reservation': reservation,
     })

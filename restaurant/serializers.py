@@ -68,6 +68,7 @@ class ReservationCreateSerializer(serializers.ModelSerializer):
             'special_requests'
         ]
 
+
 class UserSerializer(serializers.ModelSerializer):
     """Сериализатор для пользователей"""
     password = serializers.CharField(write_only=True, required=True)

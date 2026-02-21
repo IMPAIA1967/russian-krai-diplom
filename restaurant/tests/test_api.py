@@ -1,7 +1,7 @@
 import pytest
 from rest_framework import status
 from rest_framework.test import APITestCase
-from restaurant.models import Category, MenuItem, Reservation
+from restaurant.models import Category, MenuItem
 from datetime import date, timedelta
 
 
@@ -56,7 +56,7 @@ class TestMenuItemAPI(APITestCase):
 
     def test_filter_by_category(self):
         """GET /api/menu/?category={id} — фильтрация по категории"""
-        item = MenuItem.objects.create(
+        MenuItem.objects.create(
             name='Борщ',
             description='Традиционный',
             price='450.00',
@@ -113,7 +113,6 @@ class TestReservationAPI(APITestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data['guest_name'] == 'Иван Иванов'
-
 
     def test_create_reservation_past_date(self):
         """POST /api/reservations/ — валидация даты (опционально)"""

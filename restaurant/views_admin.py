@@ -181,7 +181,7 @@ def admin_team(request):
 
 def admin_add_team_member(request):
     """
-    Добавление нового члена команды.
+    Добавление нового члена команды
     """
     if not (request.user.is_authenticated and request.user.is_staff_user):
         messages.error(request, 'Доступ запрещён. Только для сотрудников.')
@@ -226,7 +226,7 @@ def admin_add_team_member(request):
 
 def admin_edit_team_member(request, pk):
     """
-    Редактирование члена команды.
+    Редактирование члена команды
     """
     if not (request.user.is_authenticated and request.user.is_staff_user):
         messages.error(request, 'Доступ запрещён. Только для сотрудников.')
@@ -265,7 +265,7 @@ def admin_delete_team_member(request, pk):
     member = get_object_or_404(TeamMember, pk=pk)
     member.delete()
 
-    messages.success(request, f'Член команды удалён!')
+    messages.success(request, 'Член команды удалён!')
     return redirect('admin_team')
 
 
@@ -297,7 +297,7 @@ def admin_reviews(request):
 
 def admin_publish_review(request, pk):
     """
-    Опубликовать отзыв.
+    Опубликовать отзыв
     """
     if not (request.user.is_authenticated and request.user.is_staff_user):
         messages.error(request, 'Доступ запрещён.')
